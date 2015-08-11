@@ -1,0 +1,1183 @@
+---
+title: "University of Idaho Statistics 519 Spring 2015 Homework #2"
+author: "Author: David Erich Seamon - erichs@uidaho.edu "
+date: "Due Date: 02/20/2015"
+header-includes:
+- \usepackage{fancyhdr}
+- \usepackage{enumitem}
+- \usepackage{tikz,amsmath}
+- \newcommand\hlight[1]{\tikz[overlay, remember picture,baseline=-\the\dimexpr\fontdimen22\textfont2\relax]\node[rectangle,fill=blue!50,rounded corners,fill opacity = 0.2,draw,thick,text opacity =1] {$#1$};} 
+- \pagestyle{fancy}
+- \usepackage{amsmath}
+- \newcommand\sufr[3][0pt]{$\rule{0pt}{\dimexpr#1+1.4ex\relax}^\frac{#2}{#3}$}
+- \fancyhead[CO,CE]{Erich Seamon - University of Idaho}
+- \fancyfoot[CO,CE]{Statistics 519 - Homework 2 - 02/20/2015}
+- \renewcommand{\headrulewidth}{0.4pt}% Default \headrulewidth is 0.4pt
+- \renewcommand{\footrulewidth}{0.4pt}% Default \footrulewidth is 0pt
+- \fancyfoot[LE,RO]{\thepage}
+output:
+  pdf_document:
+    keep_tex: yes
+    
+    
+
+---
+
+\noindent {\bf ASSIGNED PROBLEMS: 4.1, 4.2, 4.4, 4.12, 4.13, 4.15, 4.17, 5.3, 5.12, 5.16 }
+
+\begin{enumerate}\bfseries
+
+\setlength{\itemindent}{.5in}
+    \item [Problem 4.1]
+    
+    \end{enumerate}
+    \begin{enumerate}
+    
+
+    \item[] Consider the two covariance matrices
+      
+
+  
+        \[ \Sigma_{1} = \begin{pmatrix} 14 & 8 & 3 \\
+                               8 & 5 & 2 \\
+                               3 & 2 & 1 \end{pmatrix},
+          \Sigma_{2} = \begin{pmatrix} 6 & 6 & 1\\ 
+    		     6 & 8 & 2 \\
+ 				      1 & 2 & 1 \end{pmatrix} \]
+               
+               Show that 
+               
+               \[ |\Sigma_{1}| < |\Sigma_{2}|\]
+               
+               and that
+               
+               \[tr(\Sigma_{2} < tr(\Sigma+{1}))\]
+               
+               Thus the generalized variance of population 2 is greater than the generalized variance population 1, even though the total variance is less. Comment of why this is true in terms of the variances and correlations.
+               
+     \item[] 
+               Solution:
+               
+                \end{enumerate}
+   
+```{r}
+Sigma1 <- matrix(c(14,8,3,8,5,2,3,2,1), ncol=3)
+Sigma2 <- matrix(c(6,6,1,6,8,2,1,2,1), ncol=3)
+det(Sigma1)
+det(Sigma2)
+sum(diag(Sigma1))
+sum(diag(Sigma2))
+```
+   
+   \begin{enumerate}
+   
+   \item[] Comment:  
+   
+   The generalized population variance, or \[|\Sigma|\] is a measure of the concentration of y's close to the mean of the matrix - or its multicollinearity.  The smaller the Sigma, the more concentrated y values are around the mean.  The trace of a variance matrix provides the sum of the total variances.  As such, an increase in the variance will result in a larger Sigma.  This explains why the matrix Sigma1 - has a lower Sigma than mattrix Sigma2, but a  higher variance.
+
+    \end{enumerate}
+
+   \begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+                
+  \item [Problem 4.2]
+    \end{enumerate}
+    \begin{enumerate}
+
+        \item[] For \[z = (T')^-1 (y - \mu)\] in (4.4), show that \[E(z) = 0\;and\;cov(z) = I\]
+        
+        Solution:
+        
+        For a standardized vector, z, T' is derived from the Cholesky decomposition of the variance-covariance matrix - Sigma = T'T.  In addition, T' may be found by substituting it for the symmetric square root matrix of the variance-covariance matrix.  In either case, it follows that:
+        
+        \[\Sigma(z) = E(E^{.5})^{-1} (y - \mu)\]
+        \[= (\Sigma^{.5})^{-1} E(y - \mu)\]
+        \[= (E^{.5})^{-1} (E(y) - \mu)\]
+        \[= 0\]
+        
+        \[If\;y\;is\;N_{p}(\mu, \Sigma),\;then\;z\;is\;N_{p}(0,I)\]
+        
+ \end{enumerate}
+
+   \begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+                
+  \item [Problem 4.4]
+    \end{enumerate}
+    \begin{enumerate}
+
+        \item[] For \[(y-\mu)'\Sigma^{-1}(y-\mu)\] in (4.3) and (4.6), show that \[E[(y-\mu)'\Sigma^{-1}(y-\mu)] = p\]
+        
+        \[\;\;Assume\;E(y) = \mu\;and\;cov(y) = \Sigma\]
+        
+        Solution: The Mahalanobis Distance is a scalar value - and as such, the above equation can be reduced to:
+        
+        \[=\; E[tr(y - \mu)' \Sigma^{-1}(y - \mu)]\]
+        
+        which translates to
+        
+        \[=\;tr(I_{p})\;=\;p\]
+        
+         \end{enumerate}
+
+   \begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+  \item[]
+  \item[]
+                
+  \item [Problem 4.12]
+    \end{enumerate}
+    \begin{enumerate}
+        
+   \item[] Suppose
+  
+  \[ y\;is\;N_{4}(\mu, \Sigma),\;where\]
+    
+    \[ \mu = \begin{pmatrix} -2  \\
+                               3  \\
+                               -1  \\
+                               5 \end{pmatrix},
+          \Sigma = \begin{pmatrix} 11 & -8 & 3 & 9 \\ 
+             -8 & 9 & -3 & -6 \\
+ 				      3 & -3 & 2 & 3\\
+               9 & -6 & 3 & 9 \end{pmatrix} \]
+               
+    \setlength{\itemindent}{.5in}
+
+    \item[(a)] Find the distribution of:
+    
+    \[z = 4y_{1} - 2y_{2} + y_{3} - 3y_{4}\ \]
+   \item[]
+   Solution:
+   
+   \[ if\;y\;is\;N_{p}(\mu, \Sigma),\;then\;a'y\;is\;N(a' \mu, a'\Sigma a)\]
+   
+   \[a' = 4, -2, 1, -3\]
+   
+   \[a'\mu\;is\;\begin{pmatrix} 4 & -2 & 1 & -3 \end{pmatrix}
+          \begin{pmatrix} 11 & -8 & 3 & 9 \\ 
+             -8 & 9 & -3 & -6 \\
+   			      3 & -3 & 2 & 3\\
+               9 & -6 & 3 & 9 \end{pmatrix} \]
+               
+  \[a'\Sigma a\;is\;\begin{pmatrix} 4 \\ -2 \\ 1 \\ -3 \end{pmatrix}
+  \begin{pmatrix} 11 & -8 & 3 & 9 \\ 
+             -8 & 9 & -3 & -6 \\
+     		      3 & -3 & 2 & 3\\
+               9 & -6 & 3 & 9 \end{pmatrix}
+               \begin{pmatrix} 4 & -2 & 1 & -3 \end{pmatrix}\]
+               
+               \[ a'y\;is\;N(-30, 153)\]
+  
+\end{enumerate}
+
+```{r}
+mean <- matrix(c(-2, 3, -1, 5), ncol=1)
+sigma <- matrix(c(11, -8, 3, 9, -8, 9, -3, -6, 3, -3, 2, 3, 9, -6, 3, 9), ncol=4)
+a <- matrix(c(4, -2, 1, -3), ncol=1)
+at <- t(a)
+at %*% mean #--multiplying a' by the mean vector
+at %*% sigma %*% a #---multiplying a' by sigma and by a
+```
+ 
+\begin{enumerate}
+              
+    \setlength{\itemindent}{.5in}
+    \item[]
+
+    \item[(b)] Find the joint distribution of:
+    
+    \[z_{1} = 3y_{1} + y_{2} + y_{3} + y_{4}\;and\;z_{2} = -2y_{1} + 3y_{2} + y_{3} -2y_{4}\]
+    
+     Solution:
+     
+      \[ if\;y\;is\;N_{p}(\mu, \Sigma),\;then\;Ay\;is\;N(A \mu, A \Sigma A')\]
+   
+   \[A = \begin{pmatrix} 1 & 1 & 1 & 1 \\ -2 & 3 & 1 & -2 \end{pmatrix} \]
+   
+   \[A \mu = \begin{pmatrix} 1 & 1 & 1 & 1 \\ -2 & 3 & 1 & -2 \end{pmatrix} \begin{pmatrix} 11 & -8 & 3 & 9 \\ 
+             -8 & 9 & -3 & 6 \\
+       	      3 & -3 & 2 & 3\\
+               9 & 6 & 3 & 9 \end{pmatrix}  \]
+   
+   \[A \mu = \begin{pmatrix} 5  \\ 2  \end{pmatrix} \]
+               
+  \[A\Sigma A'\;is\;\begin{pmatrix} 1 & 1 & 1 & 1 \\ -2 & 3 & 1 & -2 \end{pmatrix}
+  \begin{pmatrix} 11 & -8 & 3 & 9 \\ 
+             -8 & 9 & -3 & -6 \\
+   			      3 & -3 & 2 & 3\\
+               9 & -6 & 3 & 9 \end{pmatrix}
+               \begin{pmatrix} 1 & -2 \\ 1 & 3 \\ 1 & 1 \\ 1 & -2 \end{pmatrix}\]
+               
+               \[ A \Sigma A' = \begin{pmatrix} 27 & -79 \\ -79 & 361 \end{pmatrix}\]
+               
+               \[Ay\;is\;N(\begin{pmatrix} 5  \\ 2  \end{pmatrix}, \begin{pmatrix} 27 & -79 \\ -79 & 361 \end{pmatrix})\]
+     
+       \end{enumerate}
+
+```{r}
+mean <- matrix(c(-2, 3, -1, 5), ncol=1)  #---mean
+sigma <- matrix(c(11, -8, 3, 9, -8, 9, -3, -6, 3, -3, 2, 3, 9, -6, 
+3, 9), ncol=4) #---cov matrix
+A <- matrix(c(1, -2, 1, 3, 1, 1, 1, -2), ncol=4) #---creating z1 and z2 matrix
+At <- t(A) #---transposing A
+A %*% mean #---multiplying A' by the mean vector
+A %*% sigma %*% At #---multiplying A by sigma and by A'
+```
+ 
+ \begin{enumerate}
+     
+\setlength{\itemindent}{.5in}
+    \item[]
+
+    \item[(c)] Find the joint distribution of:
+    
+    \[z_{1} = 3y_{1} + y_{2} - 4y_{3} - y_{4}\;and \]
+    
+    \[z_{2} = -y_{1} - 3y_{2} + y_{3} - 2y_{4}\;and \]
+    
+    \[z_{3} = 2y_{1} + 2y_{2} + 4y_{3} - 5y_{4}\;and \]
+    
+    Solution:
+    
+    \[ if\;y\;is\;N_{p}(\mu, \Sigma),\;then\;Ay\;is\;N(A \mu, A \Sigma A')\]
+   
+   \[A = \begin{pmatrix} 3 & 1 & -4 & -1 \\ -1 & -3 & 1 & -2 \\ 2 & 2 &4 & -5 \end{pmatrix} \]
+   
+   \[A \mu = \begin{pmatrix} 3 & 1 & -4 & -1 \\ -1 & -3 & 1 & -2 \\ 2 & 2 &4 & -5 \end{pmatrix} \begin{pmatrix} 11 & -8 & 3 & 9 \\ 
+             -8 & 9 & -3 & 6 \\
+               3 & -3 & 2 & 3\\
+               9 & 6 & 3 & 9 \end{pmatrix}  \]
+   
+   \[A \mu = \begin{pmatrix} -4  \\ -18 \\-27  \end{pmatrix} \]
+               
+  \[A\Sigma A'\;is\;\begin{pmatrix} 3 & 1 & -4 & -1 \\ -1 & -3 & 1 & -2 \\ 2 & 2 &4 & -5 \end{pmatrix}
+  \begin{pmatrix} 11 & -8 & 3 & 9 \\ 
+             -8 & 9 & -3 & -6 \\
+   			      3 & -3 & 2 & 3\\
+               9 & -6 & 3 & 9 \end{pmatrix}
+               \begin{pmatrix} 1 & -2 \\ 1 & 3 \\ 1 & 1 \\ 1 & -2 \end{pmatrix}\]
+               
+               \[ A \Sigma A' = \begin{pmatrix} 35 & -18 & -6 \\ -18 & 46 & 14 \\ -6 & 14 & 93 \end{pmatrix}\]
+               
+              \[Ay\;is\;N(\begin{pmatrix} -4  \\ -18 \\ -27  \end{pmatrix}, \begin{pmatrix} 35 & -18 & -6 \\ -18 & 46 & 14 \\ -6 & 14 & 93 \end{pmatrix})\]
+
+\end{enumerate}
+
+```{r}
+mean <- matrix(c(-2, 3, -1, 5), ncol=1)  #---mean
+sigma <- matrix(c(11, -8, 3, 9, -8, 9, -3, -6, 3, -3, 2, 3, 9, -6, 3, 
+9), ncol=4) #---cov matrix
+A <- matrix(c(3, -1, 2, 1, -3, 2, -4, 1, 4, -1, -2, 
+-5), ncol=4) #---creating z1 and z2 matrix
+At <- t(A) #---transposing A
+A %*% mean #---multiplying A' by the mean vector
+A %*% sigma %*% At #---multiplying A by sigma and by A'
+```
+ 
+ \begin{enumerate}
+               
+               
+  \setlength{\itemindent}{.5in}
+    \item[]
+
+    \item[(d)] What is the distribution of \[y_{3}?\]
+    
+    Solution: By taking the mean vector value of y3 and the similar diagonal value of y3 from the aforementioned covariance matrix, you can determine the distribution of y3:
+    
+    \[y\;is\;N(-1, 2)\]
+               
+  
+  \setlength{\itemindent}{.5in}
+  
+    \item[]
+
+    \item[(e)] What is the joint distribution of \[y_{2}\;and\;y_{4}?\]
+    
+    Solution: By taking the mean vector values of y2 and y4 and the similar diagonal value of y2 and y4 from the aforementioned covariance matrix, you can determine the distribution of y2 and y4:
+    
+    \[y\;is\;N\begin{pmatrix} 3 \\
+                               5  \end{pmatrix}, \begin{pmatrix} 9 & -6 \\
+                               -6 & 9  \end{pmatrix}\]
+                               
+  \setlength{\itemindent}{.5in}
+  
+    \item[]
+
+    \item[(f)] What is the joint distribution of \[y_{1},\; \frac{1}{4}(y_{1} + y_{2}), \frac{1}{3}(y_{1} + y_{2} + y_{3}),\;and\;\frac{1}{4}(y_{1} + y_{2} + y_{3} + y_{4}) \]
+    
+    Solution:
+    
+    \[ A = \begin{pmatrix} y_{1} \\
+                               \frac{1}{2}y_{1} + \frac{1}{2}y_{2} \\ 
+                               \frac{1}{3}y_{1} + \frac{1}{3}y_{2} + \frac{1}{3}y_{3} \\
+                               \frac{1}{4}y_{1} + \frac{1}{4}y_{2} + \frac{1}{4}y_{3} + \frac{1}{4}y_{4} \end{pmatrix}\]
+                               
+      \[ A = \begin{pmatrix}   1 & 0 & 0 & 0 \\ 
+                               \frac{1}{2} & \frac{1}{2} & 0 & 0 \\
+                               \frac{1}{3} & \frac{1}{3} & \frac{1}{3} & 0 \\
+                               \frac{1}{4} & \frac{1}{4} & \frac{1}{4} & \frac{1}{4} \end{pmatrix}
+                               \]            
+                               
+      \[ A = \begin{pmatrix}   1 & 0 & 0 & 0 \\ 
+                               \frac{1}{2} & \frac{1}{2} & 0 & 0 \\
+                               \frac{1}{3} & \frac{1}{3} & \frac{1}{3} & 0 \\
+                               \frac{1}{4} & \frac{1}{4} & \frac{1}{4} & \frac{1}{4} \end{pmatrix}
+                               \begin{pmatrix} -2 \\
+                               3 \\
+                               -1 \\
+                               5 \end{pmatrix}\;=\; 
+                               \begin{pmatrix} -2 \\
+                               .5 \\
+                               0 \\
+                               1.25 \end{pmatrix}\]                           
+    
+
+\end{enumerate}
+
+```{r}
+mean <- matrix(c(-2, 3, -1, 5), ncol=1)  #---mean
+sigma <- matrix(c(11, -8, 3, 9, -8, 9, -3, -6, 3, -3, 2, 3, 9, 
+-6, 3, 9), ncol=4) #---cov matrix
+A <- matrix(c(1, 1/2, 1/3, 1/4, 0, 1/2, 1/3, 1/4, 0, 0, 1/3, 
+1/4, 0, 0, 0, 1/4), ncol=4) #---transposing A
+roundA <- round(A, digits=3)
+At <- t(roundA)
+round(A %*% mean, digits=3) #---multiplying A' by the mean vector
+```
+ 
+ \begin{enumerate}
+ 
+   \setlength{\itemindent}{.5in}
+  
+    \item[]
+ 
+       \[ A \Sigma A' = \begin{pmatrix}   1 & 0 & 0 & 0 \\ 
+                               \frac{1}{2} & \frac{1}{2} & 0 & 0 \\
+                               \frac{1}{3} & \frac{1}{3} & \frac{1}{3} & 0 \\
+                               \frac{1}{4} & \frac{1}{4} & \frac{1}{4} & \frac{1}{4} \end{pmatrix}
+                              \begin{pmatrix} 11 & -8 & 3 & 9 \\ 
+             -8 & 9 & -3 & -6 \\
+     		      3 & -3 & 2 & 3\\
+               9 & -6 & 3 & 9 \end{pmatrix}
+               \begin{pmatrix}   1 & \frac{1}{2} & \frac{1}{3} & \frac{1}{4} \\ 
+                               0 & \frac{1}{2} & \frac{1}{3} & \frac{1}{4} \\
+                               0 & 0 & \frac{1}{3} & \frac{1}{4}  \\
+                               0 & 0 & 0 & \frac{1}{4}  \end{pmatrix}\]
+                               \[ A \Sigma A' = \begin{pmatrix} 11 & 1.5 & 2 & 3.75 \\ 1.5 & 1 & .67 & .875 \\ 2 & .67 & .67 & 1 \\ 3.75 & .875 & 1 & 1.688 \end{pmatrix}\]     
+                               
+                              \[Ay\;is\;N_{4}(\begin{pmatrix} -2  \\ .5 \\ 0 \\1.25  \end{pmatrix}, \begin{pmatrix} 11 & 1.5 & 2 & 3.75 \\ 1.5 & 1 & .67 & .875 \\ 2 & .67 & .67 & 1 \\ 3.75 & .875 & 1 & 1.688 \end{pmatrix})\]
+
+ 
+ \end{enumerate}
+
+```{r}                    
+round(A %*% sigma %*% At, digits=3) #---multiplying A by sigma and by A'           
+```                 
+  \begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+                
+  \item [Problem 4.13]
+    \end{enumerate}
+    \begin{enumerate}
+        
+   \item[] Suppose:
+   
+   \[y\;is\;N_{4}(\mu, \Sigma),\;with\;\mu\;and\;\Sigma\;given\;in\;the\;previous\;problem\]
+   
+     \setlength{\itemindent}{.5in}
+  
+    \item[]
+
+    \item[(a)] Find a vector z such that:
+    
+    \[z = (T')^{-1}(y - \mu) is N_{4}(0,I)\]
+    
+    Solution: 
+    
+    \[If\;y\;is\;N_{p}(\mu, \Sigma),\;then\;z\;is\;N_{p}(0,I)\]
+    
+    Using the cholesky decomposition, we can determine T from Sigma.  Putting T into our equation
+    
+    \[z = (T')^{-1}(y - \mu) is N_{4}(0,I)\]
+    
+    we generate a cholesky decomposed T matrix, and use that, in concert with the means of y1-y4, to determine z.
+    
+   \[ z = \begin{pmatrix}   .302 & 0 & 0 & 0 \\ 
+                               .408 & .561 & 0 & 0 \\
+                               -.87 & .261 & 1.015 & 0  \\
+                               -.858 & -.343 & -.686 & .972  \end{pmatrix}
+                              \begin{pmatrix} y + 2 \\ 
+             y - 3 \\
+       	      y + 1\\
+               y - 5 \end{pmatrix}\]
+
+    
+        \end{enumerate}
+
+    
+```{r}
+mean <- matrix(c(-2, 3, -1, 5), ncol=1)  #---mean
+sigma <- matrix(c(11, -8, 3, 9, -8, 9, -3, -6, 3, -3, 2, 3, 9, -6, 
+3, 9), ncol=4) #---cov matrix
+T <- chol(sigma)
+Tt <- t(T)
+inverse_Tt <- solve(Tt)
+inverse_Tt
+```
+
+ \begin{enumerate}
+
+     \setlength{\itemindent}{.5in}
+  
+    \item[]
+
+    \item[(b)] Find a vector z such that:
+    
+    \[z = (\Sigma^\frac{1}{2})^{-1} (y - \mu)\;is\;N_{4}(0,I)\]
+    
+    Solution:  Since A is positive definite, spectral decomposition was used, in concert with the means of y1-y4, to determine z.
+    
+    \[ \Sigma^\frac{1}{2} = CD^\frac{1}{2} C'\]
+            \end{enumerate}
+            
+            
+\[ z = (y - \mu)\;=\; \begin{pmatrix}   .810 & .305 & .143 & -.479 \\ 
+                               .305 & .582 & .249 & 1.083 \\
+                               .143 & .249 & 1.153 & -.298  \\
+                               -.480 & -.083 & -.298 & .787  \end{pmatrix}
+                              \begin{pmatrix} y + 2 \\ 
+             y - 3 \\
+               y + 1\\
+               y - 5 \end{pmatrix}\]
+
+```{r}
+  ei = eigen(sigma)
+  d = ei$values
+      d = (d+abs(d))/2
+      d2 = 1/sqrt(d)
+      d2[d == 0] = 0
+      (ei$vectors %*% diag(d2) %*% t(ei$vectors))
+```
+     
+ \begin{enumerate}
+\setlength{\itemindent}{.5in}
+  
+    \item[]
+
+    \item[(c)] What is the distribution of:
+    
+    \[(y - \mu)' \Sigma^{-1} (y - \mu)?\]
+    
+    Solution:  The Mahalanobis Distance is known to have a chi-square distibution.
+    
+    \[If\;y\;is\;N_{p}(\mu, \Sigma),\;then\;(y - \mu)' \Sigma^{-1} (y - \mu)\;is\;\chi_{p}^{2}\]
+    
+    \[(y - \mu)' \Sigma^{-1} (y - \mu) = (y - \mu)' \Sigma^\frac{1}{2}\Sigma^\frac{1}{2} (y - \mu) = \chi_{p}^{2}\]
+    
+    \end{enumerate}
+    
+   \begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+  \item[]
+  \item[]
+                
+  \item [Problem 4.15]
+    \end{enumerate}
+    \begin{enumerate}
+        
+   \item[] Suppose:
+   
+   \[y\;is\;N_{4}(\mu, \Sigma),\;with\]
+   
+   \[\mu = \begin{pmatrix} -4 \\ 
+             2 \\
+               5\\
+               -1 \end{pmatrix}
+   \Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               0 & 2 & 0 & 7 \end{pmatrix}\]
+                               
+    Which of the following random variables are independent?
+    
+    Overall Solution: Two individual variables are independent if \[\sigma_{jk}\;=\;0\]
+
+    
+    \item[(a)] \[y_{1}\;and\;y_{2}\]
+    
+   \[ Solution: \sigma_{12} = 0\;\;\;INDEPENDENT\]
+    
+       \[\Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               \hlight{0} & 3 & 0 & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               0 & 2 & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(b)] \[y_{1}\;and\;y_{3}\]
+    
+    \[Solution: \sigma_{13} = -1\;\;\;DEPENDENT\]
+    
+      \[ \Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               \hlight{-1} & 0 & 5 & 0 \\
+                               0 & 2 & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(c)] \[y_{1}\;and\;y_{4}\]
+    
+    \[Solution: \sigma_{14} = 0\;\;\;INDEPENDENT\]
+    
+       \[\Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               \hlight{0} & 2 & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(d)] \[y_{2}\;and\;y_{3}\]
+    
+   \[] Solution: \sigma_{23} = 0\;\;\;INDEPENDENT\]
+    
+       \[\Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               -1 & \hlight{0} & 5 & 0 \\
+                               0 & 2 & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(e)] \[y_{2}\;and\;y_{4}\]
+    
+    \[Solution: \sigma_{24} = 2\;\;\;DEPENDENT\]
+    
+       \[\Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               0 & \hlight{2} & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(f)] \[y_{3}\;and\;y_{4}\]
+    
+    \[Solution: \sigma_{34} = 0\;\;\;INDEPENDENT\]
+    
+       \[\Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               0 & 2 & \hlight{0} & 7 \end{pmatrix}\]
+    
+    
+    \item[(g)] \[(y_{1},\;y_{2})\;and\;y_{3}\]
+    
+    \[Solution: \sigma_{13}\;and\;\sigma_{23} = -1\;\;\;DEPENDENT\]
+    
+       \[\Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               \hlight{-1} & \hlight{0} & 5 & 0 \\
+                               0 & 2 & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(h)] \[(y_{1},\;y_{2})\;and\;y_{4}\]
+    
+   \[ Solution: \sigma_{14}\;and\;\sigma_{24} = 2\;\;\;DEPENDENT\]
+    
+       \[\Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               \hlight{0} & \hlight{2} & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(i)] \[(y_{1},\;y_{3})\;and\;y_{4}\]
+    
+   \[] Solution: \sigma_{14}\;and\;\sigma_{34} = 0\;\;\;INDEPENDENT\]
+    
+      \[ \Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               \hlight{0} & 2 & \hlight{0} & 7 \end{pmatrix}\]
+    
+    
+    \item[(j)] \[y_{1}\;and\;(y_{2},\;y_{4})\]
+    
+   \[] Solution: \sigma_{12}\;and\;\sigma_{14} = 0\;\;\;INDEPENDENT\]
+    
+      \[ \Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               \hlight{0} & 3 & 0 & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               \hlight{0} & 2 & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(k)] \[y_{1}\;and\;y_{2}\;and\;y_{3}\]
+    
+    \[Solution: \sigma_{12}\;and\;\sigma_{13};and\;\sigma_{23} = -1\;\;\;DEPENDENT\]
+    
+      \[ \Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               \hlight{0} & 3 & 0 & 2 \\
+                               \hlight{-1} & \hlight{0} & 5 & 0 \\
+                               0 & 2 & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(l)] \[y_{1}\;and\;y_{2}\;and\;y_{4}\]
+    
+    \[Solution: \sigma_{12}\;and\;\sigma_{14};and\;\sigma_{24} = 2\;\;\;DEPENDENT\]
+
+    
+  
+      \[ \Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               \hlight{0} & 3 & 0 & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               \hlight{0} & \hlight{2} & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(m)] \[(y_{2},\;y_{1})\;and\;(y_{3},\;y_{4})\]
+    
+      \[Solution: \sigma_{23}\;and\;\sigma_{24};and\;\sigma_{13};and\;\sigma_{14} = 1\;\;\;DEPENDENT\]
+    
+       \[\Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               0 & 3 & 0 & 2 \\
+                               \hlight{-1} & \hlight{0} & 5 & 0 \\
+                               \hlight{0} & \hlight{2} & 0 & 7 \end{pmatrix}\]
+    
+    
+    \item[(n)] \[(y_{1},\;y_{3})\;and\;(y_{2},\;y_{4})\]
+    
+     \[Solution: \sigma_{12}\;and\;\sigma_{14};and\;\sigma_{32}and\;\sigma_{34} = 0\;\;\;INDEPENDENT\]
+    
+       \[\Sigma = \begin{pmatrix}   8 & 0 & -1 & 0 \\ 
+                               \hlight{0} & 3 & \hlight{0} & 2 \\
+                               -1 & 0 & 5 & 0 \\
+                               \hlight{0} & 2 & \hlight{0} & 7 \end{pmatrix}\]
+                               
+ 
+ 
+ \end{enumerate}
+ \begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+                
+  \item [Problem 4.17]
+    \end{enumerate}
+    \begin{enumerate}
+        
+   \item[] Suppose y and x are subvectors, such that y is 2 x 1 and x is 3 x 1, with the mean and Sigma partitioned accordingly:
+   
+     \[ \mu = \begin{pmatrix} 3 \\
+                               2 \\
+                               \hline
+                               4 \\
+                               3 \\
+                               5 \\
+                               \end{pmatrix} 
+   \Sigma = \left ( \begin{array}{cc|ccc} 14 & -8 & 15 & 0 & 3 \\ 
+   -8 & 18 &  8 & 6 & -2 \\ 
+   \hline 15 & 8 & 50 & 8 & 5\\ 
+   0 & 6 & 8 & 4 & 0\\ 
+   3 & -2 &  5 & 0 & 1\end{array} \right ) \]
+    
+    Assume that:
+    
+    \[\frac{y}{x}\;is\;distributed\;as\;N_{5}(\mu, \Sigma)\]
+        
+      \setlength{\itemindent}{.5in}
+
+     \item[(a)]  Find E(y|x)
+     
+     Solution:  For this solution, we use the equation:
+     
+     \[E(y|x) = \mu_{y} + \Sigma_{yx}\Sigma_{xx}^{-1} (x - \mu_{x})\]
+     
+     \[E(y|x)\;=\;\begin{pmatrix} 3 \\ -2 \end{pmatrix} + \begin{pmatrix} 15 & 0 & 3 \\ 8 & 6 & -2 \end{pmatrix}
+     \begin{pmatrix} 50 & 8 & 5 \\ 8 & 4 & 0 \\ 5 & 0 & 1\end{pmatrix}^{-1} 
+     \begin{pmatrix} x_{1} - 4 \\ x_{2} + 3 \\ x_{3} - 5 \end{pmatrix}\]
+     
+     Factoring out 
+    
+    \[(x - \mu_{x})\]
+    
+    and multiplying matrices, results in
+    
+    \[E(y|x) = \mu_{y} + \Sigma_{yx}\Sigma_{xx}^{-1} (x - \mu_{x})\]
+     
+     \[E(y|x)\;=\;\begin{pmatrix} 3 \\ -2 \end{pmatrix} + \begin{pmatrix} 15 \\ -24.5 \end{pmatrix}
+     \begin{pmatrix} 0 & 0 & 3 \\ .67 & .167 & -5.33 \end{pmatrix} \begin{pmatrix} x_{1}\\ x_{2}\\ x_{3}\end{pmatrix}\]
+     
+     which results in
+     
+     \[\begin{pmatrix} -12 \\ 22 \end{pmatrix} + \begin{pmatrix} 0 & 0 & 3 \\ .67 & .167 & -5.33 \end{pmatrix} \begin{pmatrix} x_{1}\\ x_{2}\\ x_{3}\end{pmatrix}\]
+    
+    
+     \end{enumerate}
+```{r}
+mu <- matrix(c(3, -2, 4, -3, 5), ncol=1)
+mu_y <- matrix(c(3, -2), ncol=1)  #---mean
+sigma <- matrix(c(14, -8, 15, 0, 3, -8, 18, 8, 6, -2, 15, 8, 50, 8, 5, 0, 
+6, 8, 4, 0, 3, -2, 5, 0 , 1), ncol=5) #---cov matrix
+sigma_yx <- matrix(c(15, 0, 3, 8, 6, -2), ncol=2)
+sigma_yx <- t(sigma_yx)
+sigma_xx <- matrix(c(50, 8, 5, 8, 4, 0, 5, 0, 1), ncol=3)
+inverse_sigma_xx <- solve(sigma_xx)
+y <- sigma_yx %*% inverse_sigma_xx
+y <- round(y, digits=2)
+y
+``` 
+\begin{enumerate}
+
+    \item[(b)] Find cov(y|x)
+    
+    Solution: For this solution, we use the equation:
+     
+     \[cov(y|x) = \Sigma_{yy} - \Sigma_{yx}\Sigma_{xx}^{-1} \Sigma_{xy}\]
+     
+       \[cov(y|x) = \begin{pmatrix} 14 & -8 \\ -8 & 18 \end{pmatrix} - \begin{pmatrix} 15 & 0 & 3 \\ 8 & 6 & -2 \end{pmatrix}
+     \begin{pmatrix} 50 & 8 & 5 \\ 8 & 4 & 0 \\ 5 & 0 & 1\end{pmatrix}^{-1} 
+     \begin{pmatrix} 15 & 8 \\ 0 & 6 \\ 3 & 2  \end{pmatrix}\]
+     
+     \[cov(y|x) = \begin{pmatrix} 5 & -2 \\ -1 & 1\end{pmatrix}\]
+     
+         \end{enumerate}
+         
+```{r}
+mu <- matrix(c(3, -2, 4, -3, 5), ncol=1)
+mu_y <- matrix(c(3, -2), ncol=1)  #---mean
+sigma <- matrix(c(14, -8, 15, 0, 3, -8, 18, 8, 6, -2, 15, 8, 50, 8, 5, 0, 
+6, 8, 4, 0, 3, -2, 5, 0 , 1), ncol=5) #---cov matrix
+sigma_yy <- matrix(c(14, -8, -8, 18), ncol=2)
+sigma_yx <- matrix(c(15, 8, 0, 6, 3, -2), ncol=3)
+sigma_xy <- matrix(c(15, 0, 3, 8, 6, -2), ncol=2)
+sigma_xx <- matrix(c(50, 8, 5, 8, 4, 0, 5, 0, 1), ncol=3)
+inverse_sigma_xx <- solve(sigma_xx)
+covyx <- sigma_yy - sigma_yx %*% inverse_sigma_xx %*% sigma_xy
+covyx
+``` 
+\begin{enumerate}\bfseries 
+
+\setlength{\itemindent}{.5in}
+
+
+    \item [Problem 5.3]
+    \end{enumerate}
+    \begin{enumerate}
+    \item[] Show that 
+    
+    \[ t^{2}(a) = T^{2}\]
+    
+    Solution: By substituting
+    
+    \[a = S_{pl}^-1 (\bar{y}_{1} - \bar{y}_{2})\]
+    
+    
+    into the following equation
+    
+    
+    \[t_{2}(a) = \frac{[a'(\bar{y}_{1} - \bar{y}_{2})]^{2}}{[n_{1} + n_{2})/n_{1}n_{2}] a'S_{pl}a}\]
+    
+    and factoring out
+    
+    \[[n_{1} + n_{2})/n_{1}n_{2}]\]
+    
+    results in
+    
+    \[t^{2}(a) = \frac{n_{1}n{2}}{n_{1} + n_{2}} \frac{[(\bar{y}_{1} - \bar{y}_{2})'S_{pl}^{-1}(\bar{y}_{1} - \bar{y}_{2})]^{2}}{(\bar{y}_{1} - \bar{y}_{2})'S_{pl}^{-1}S_{pl}S_{pl}^{-1}(\bar{y}_{1} - \bar{y}_{2})} = T^{2}\]
+    
+    \end{enumerate}
+        
+    \begin{enumerate}\bfseries 
+
+\setlength{\itemindent}{.5in}
+
+    \item [Problem 5.12]
+    \end{enumerate}
+    \begin{enumerate}
+    \item[] Use the probe word data in Table 3.5:
+    
+    \item[(a)] Test:
+   
+    \[H_{0}: \mu = (30,25,40,25,30)'\]
+    
+   Solution: y and S were first calculated from the observations, and then plugged into the following test statistic formula:
+    
+    \[T^{2} = n(\bar{y} - \mu_{0})'S^{-1} (\bar{y} - \mu_{0})\]
+             
+\end{enumerate}
+```{r}
+probe <- matrix(c(51,27,37,42,27,43,41,38,36,26,29,36,20,22,36,18,32,
+22,21,23,31,20,50,26,41,32,33,43,36,31,27,31,25,35,17,37,34,14,35,25,
+20,25,32,26,42,27,30,27,29,40,38,16,28,36,25), ncol=5)
+p <- 5
+v <- 10
+mu0 <- matrix(c(30,25,40,25,30), ncol=1)
+mean1 <- mean(probe[,1])
+mean2 <- mean(probe[,2])
+mean3 <- mean(probe[,3])
+mean4 <- mean(probe[,4])
+mean5 <- mean(probe[,5])
+y = matrix(c(mean1, mean2, mean3, mean4, mean5), ncol=1)
+yt = t(y)
+S = var(probe)
+inverseS = solve(S)
+T2 = 11 * (t(mu0 - y) %*% inverseS %*% (mu0 - y))
+print(paste("T2 = " , T2))
+```
+
+\begin{enumerate}
+    
+    \item[(b)] If Ho is rejected, test each variable separately.
+   \item[]
+   Solution: Based on the T2 above, Ho was rejected.  As such, each variable is tested separately below.
+   
+         \end{enumerate}
+
+```{r}
+t1 <- t.test(probe[,1], mu = 30)
+t1 <- round(t1$statistic, digits=4)
+t2 <- t.test(probe[,2], mu = 25)
+t2 <- round(t2$statistic, digits=4)
+t3 <- t.test(probe[,3], mu = 40)
+t3 <- round(t3$statistic, digits=4)
+t4 <- t.test(probe[,4], mu = 25)
+t4 <- round(t4$statistic, digits=4)
+t5 <- t.test(probe[,5], mu = 30)
+t5 <- round(t5$statistic, digits=4)
+print(paste(" t1 = " , t1 , " t2 = " , t2 , " t3 = " , t3 , " t4 = " , 
+t4 , " t5 = " , t5 , sep=""))
+```
+
+\begin{enumerate}\bfseries 
+
+\setlength{\itemindent}{.5in}
+
+    \item [Problem 5.16]
+    \end{enumerate}
+    \begin{enumerate}
+    \item[] Four measurements were made on two species of flea beetles.  The variables were:
+    
+    y1 = distance of transverse groove from posterior border of prothorax\\
+    y2 = length of elytra\\
+    y3 = length of second antennal joint\\
+    y4 = length of third antennal joint\\
+  
+  \item[(a)] 
+  
+  \[Test\;H_{0}: \mu_{1} = \mu_{2}\;using\;T^{2}\]
+  
+  Solution:
+   
+   
+                               
+\end{enumerate}
+   
+```{r}
+v <- (19 + 20 -2)
+p <- 4
+beetle1 <- matrix(c(189,192,217,221,171,192,213,192,170,201,195,205,180,192,200,192,200,
+181,192,245,260,276,299,239,262,278,255,244,276,242,263,252,283,294,277,287,255,287,137,
+132,141,142,128,147,136,128,128,146,128,147,121,138,138,150,136,146,141,163,217,192,213,
+158,173,201,185,192,186,192,192,167,183,188,177,173,183,198), ncol=4)
+beetle2 <- matrix(c(181,158,184,171,181,181,177,198,180,177,176,192,176,169,164,181,192,
+181,175,197,305,237,300,273,297,308,301,308,286,299,317,312,285,287,265,308,276,278,271,
+303,184,133,166,162,163,160,166,141,146,171,166,166,141,162,147,157,154,149,140,170,209,
+188,231,213,224,223,221,197,214,192,213,209,200,214,192,204,209,235,192,205), ncol=4)
+beetle1mean1 <- mean(beetle1[,1])
+beetle1mean2 <- mean(beetle1[,2])
+beetle1mean3 <- mean(beetle1[,3])
+beetle1mean4 <- mean(beetle1[,4])
+beetle2mean1 <- mean(beetle2[,1])
+beetle2mean2 <- mean(beetle2[,2])
+beetle2mean3 <- mean(beetle2[,3])
+beetle2mean4 <- mean(beetle2[,4])
+beetle1mean <- matrix(c(beetle1mean1, beetle1mean2, beetle1mean3, beetle1mean4))
+beetle2mean <- matrix(c(beetle2mean1, beetle2mean2, beetle2mean3, beetle2mean4))
+S1 <- cov(beetle1)
+S2 <- cov(beetle2)
+Spooled <- 1/(19+20-2)
+Spooled2 <- 18 * S1 + 19 * S2
+Spooled <- Spooled * Spooled2
+InverseSpooled <- solve(Spooled)
+T21 <- (19 * 20/(19 + 20)) 
+T22 <- (t(beetle1mean - beetle2mean))
+T23 <- (beetle1mean - beetle2mean)
+T2 <- T21 * T22 %*% InverseSpooled %*% T23
+T2 <- round(T2, digits=4)
+print(paste("T2 = " , T2))
+```
+   
+  Based on the T2 value above, we can reject the Ho hypothesis (Ho:mean1 = mean2).
+  
+   \begin{enumerate}
+
+\setlength{\itemindent}{.5in}
+                               
+    \item[(b)] If the T2 test in part a rejects H0, carry out a t-test on each variable.
+   
+   Solution: Based on the rejection of the hypothesis above, we test each variable below: 
+   
+   \end{enumerate}
+   
+```{r}
+beetleall <- matrix(c(189,192,217,221,171,192,213,192,170,201,195,205,180,192,200,192,200,
+181,192,NA,245,260,276,299,239,262,278,255,244,276,242,263,252,283,294,277,287,255,287,NA,137,
+132,141,142,128,147,136,128,128,146,128,147,121,138,138,150,136,146,141,NA,163,217,192,213,
+158,173,201,185,192,186,192,192,167,183,188,177,173,183,198,NA,181,158,184,171,181,181,177,
+198,180,177,176,192,176,169,164,181,192,181,175,197,305,237,300,273,297,308,301,308,286,299,
+317,312,285,287,265,308,276,278,271,303,184,133,166,162,163,160,166,141,146,171,166,166,141,
+162,147,157,154,149,140,170,209,188,231,213,224,223,221,197,214,192,213,209,200,214,192,204,
+209,235,192,205), ncol=8)
+t1 <- t.test(beetleall[,1], beetleall[,5])
+t1 <- round(t1$statistic, digits=4)
+t2 <- t.test(beetleall[,2], beetleall[,6])
+t2 <- round(t2$statistic, digits=4)
+t3 <- t.test(beetleall[,3], beetleall[,7])
+t3 <- round(t3$statistic, digits=4)
+t4 <- t.test(beetleall[,4], beetleall[,8])
+t4 <- round(t4$statistic, digits=4)
+print(paste(" t1 = " , t1 , " t2 = " , t2 , " t3 = " , t3 , " t4 = " , 
+t4 , sep=""))
+```
+   
+   \begin{enumerate}
+   
+   \setlength{\itemindent}{.5in}
+
+                               
+    \item[(c)] Calculate the discriminant function coefficient vector:
+    
+    \[ a = S_{pl}^{-1} (\bar{y}_{1} - \bar{y}_{2})\]
+    
+   Solution: 
+   
+   \end{enumerate}
+   
+```{r}
+y1mean <- mean(cbind(beetleall[,1]), na.rm = TRUE)
+y2mean <- mean(cbind(beetleall[,2]), na.rm = TRUE)
+y3mean <- mean(cbind(beetleall[,3]), na.rm = TRUE)
+y4mean <- mean(cbind(beetleall[,4]), na.rm = TRUE)
+y5mean <- mean(cbind(beetleall[,5]), na.rm = TRUE)
+y6mean <- mean(cbind(beetleall[,6]), na.rm = TRUE)
+y7mean <- mean(cbind(beetleall[,7]), na.rm = TRUE)
+y8mean <- mean(cbind(beetleall[,8]), na.rm = TRUE)
+ybar1 <- c(y1mean, y2mean, y3mean, y4mean)
+ybar2 <- c(y5mean, y6mean, y7mean, y8mean)
+S1 <- cov(beetle1)
+S2 <- cov(beetle2)
+Spooled <- 1/(19+20-2)
+Spooled2 <- 18 * S1 + 19 * S2
+Spooled <- Spooled * Spooled2
+InverseSpooled <- solve(Spooled)
+a = InverseSpooled %*% (ybar1 - ybar2)
+a <- round(a, digits=4)
+print(paste("discriminant function coefficient vector = ", a, sep=""))
+```
+
+\begin{enumerate}
+
+\setlength{\itemindent}{.5in}
+
+                               
+    \item[(d)] Show that if the vector a found in part (c) is substituted into t2, the result is the same as the value of T2.
+    
+    Solution:  Using the following equation:
+    
+    \[t(a) = \frac{a'\bar{y}_{1} - a'\bar{y}_{2}}{\sqrt{[(n_{1} + n_{2})/n_{1}n_{2}] a' S_{pl} a}}\]
+    
+   
+   \end{enumerate}
+
+```{r}
+ta2_1 <- (19 + 20)/(19 * 20)
+ta2_2 <- t(a) %*% Spooled %*% a
+ta2_3 <- (t(a) %*% ybar1) - (t(a) %*% ybar2)
+t <- ta2_3/sqrt(ta2_1 %*% ta2_3)
+t2 <- t^2
+t2
+```
+   
+   \begin{enumerate}
+
+\setlength{\itemindent}{.5in}
+
+                               
+    \item[(e)] Obtain T2 using the regression approach.
+    
+   Solution: 
+      
+   \end{enumerate}
+
+```{r}
+w2 <- -19/39
+w1 <- 20/39
+w <- c(-0.4871795,-0.4871795,-0.4871795,-0.4871795,-0.4871795,
+-0.4871795,-0.4871795,-0.4871795,-0.4871795,-0.4871795,-0.4871795,
+-0.4871795,-0.4871795,-0.4871795,-0.4871795,-0.4871795,-0.4871795,-0.4871795,
+-0.4871795,0.5128205,0.5128205,0.5128205,0.5128205,0.5128205,
+0.5128205,0.5128205,0.5128205,0.5128205,0.5128205,0.5128205,0.5128205,
+0.5128205,0.5128205,0.5128205,0.5128205,0.5128205,0.5128205,
+0.5128205,0.5128205)
+w <- data.frame(w)
+beetlecombined <- rbind(beetle1, beetle2)
+beetlecombined <- cbind(beetlecombined, w)
+colnames(beetlecombined) <- c("y1", "y2", "y3", "y4", "w")
+beetlecombined.lm <- lm(w ~ y1 + y2 + y3 + y4, data=beetlecombined)
+R2 <- round(summary(beetlecombined.lm)$r.squared, digits=5)
+print(paste("R2 = ", R2, sep=""))
+```
+
+   
+   Calculate T2 from R2 using the following formula:
+   
+   \[T2 = (n_{1} + n_{2} - 2)\frac{R^{2}}{1 - R^{2}}\]
+   
+   
+
+```{r}
+R2 <- round(summary(beetlecombined.lm)$r.squared, digits=5)
+T2 <- (19 + 20 -2)* (R2/(1 - R2))
+T2 <- round(T2, digits=5)
+print(paste("T2 = ", T2, sep=""))
+```
+ 
+   \begin{enumerate}
+
+\setlength{\itemindent}{.5in}
+
+                               
+    \item[(f)] Test the significance of each variable adjusted for the other three.
+    
+    Solution:  The following formula was used to calculate t2 for each variable adjusted for the other three.
+    
+    \[t^{2}(x|y) = (v - p) \frac{T_{p+1}^{2} - T_{p}^{2} }{v + T_{p}^{2}}\]
+
+   \end{enumerate}
+
+```{r}
+beetle1 <- matrix(c(189,192,217,221,171,192,213,192,170,201,195,205,180,192,200,192,200,
+181,192,245,260,276,299,239,262,278,255,244,276,242,263,252,283,294,277,287,255,287,137,
+132,141,142,128,147,136,128,128,146,128,147,121,138,138,150,136,146,141,163,217,192,213,
+158,173,201,185,192,186,192,192,167,183,188,177,173,183,198), ncol=4)
+beetle2 <- matrix(c(181,158,184,171,181,181,177,198,180,177,176,192,176,169,164,181,192,
+181,175,197,305,237,300,273,297,308,301,308,286,299,317,312,285,287,265,308,276,278,271,
+303,184,133,166,162,163,160,166,141,146,171,166,166,141,162,147,157,154,149,140,170,209,
+188,231,213,224,223,221,197,214,192,213,209,200,214,192,204,209,235,192,205), ncol=4)
+beetle1mean1 <- mean(beetle1[,1])
+beetle1mean2 <- mean(beetle1[,2])
+beetle1mean3 <- mean(beetle1[,3])
+beetle1mean4 <- mean(beetle1[,4])
+beetle2mean1 <- mean(beetle2[,1])
+beetle2mean2 <- mean(beetle2[,2])
+beetle2mean3 <- mean(beetle2[,3])
+beetle2mean4 <- mean(beetle2[,4])
+y1beetlemean234 <- rbind(beetle1mean2, beetle1mean3, beetle1mean4)
+y2beetlemean234 <- rbind(beetle2mean2, beetle2mean3, beetle2mean4)
+y1beetlemean134 <- rbind(beetle1mean1, beetle1mean3, beetle1mean4)
+y2beetlemean134 <- rbind(beetle2mean1, beetle2mean3, beetle2mean4)
+y1beetlemean124 <- rbind(beetle1mean1, beetle1mean2, beetle1mean4)
+y2beetlemean124 <- rbind(beetle2mean1, beetle2mean2, beetle2mean4)
+y1beetlemean123 <- rbind(beetle1mean1, beetle1mean2, beetle1mean3)
+y2beetlemean123 <- rbind(beetle2mean1, beetle2mean2, beetle2mean3)
+v <- (19 + 20 - 2)
+p <- 4
+Syy1 <- Spooled[-c(1), -c(1)] 
+InverseSyy1 <- solve(Syy1)
+Syy2 <- Spooled[-c(2), -c(2)]
+InverseSyy2 <- solve(Syy2)
+Syy3 <- Spooled[-c(3), -c(3)]
+InverseSyy3 <- solve(Syy3)
+Syy4 <- Spooled[-c(4), -c(4)]
+InverseSyy4 <- solve(Syy4)
+T21 <- (19 * 20/(19 + 20)) 
+T22 <- (t(beetle1mean - beetle2mean))
+T23 <- (beetle1mean - beetle2mean)
+T2 <- T21 * T22 %*% InverseSpooled %*% T23
+y1t2 <- ((19 * 20)/(19 + 20)) * t(y1beetlemean234 - y2beetlemean234) %*% InverseSyy1 %*% 
+(y1beetlemean234 - y2beetlemean234)
+T2y1 <- (v - 3) * (T2 - y1t2)/(v + y1t2)
+T2y1 <- round(T2y1, digits=4)
+y2t2 <- ((19 * 20)/(19 + 20)) * t(y1beetlemean134 - y2beetlemean134) %*% InverseSyy2 %*% 
+(y1beetlemean134 - y2beetlemean134)
+T2y2 <- (v - 3) * (T2 - y2t2)/(v + y2t2)
+T2y2 <- round(T2y2, digits=4)
+y3t2 <- ((19 * 20)/(19 + 20)) * t(y2beetlemean124 - y1beetlemean124) %*% InverseSyy3 %*% 
+(y2beetlemean124 - y1beetlemean124)
+T2y3 <- (v - 3) * (T2 - y3t2)/(v + y3t2)
+T2y3 <- round(T2y3, digits=4)
+y4t2 <- ((19 * 20)/(19 + 20)) * t(y1beetlemean123 - y2beetlemean123) %*% InverseSyy4 %*% 
+(y1beetlemean123 - y2beetlemean123)
+T2y4 <- (v - 3) * (T2 - y4t2)/(37 + y4t2)
+T2y4 <- round(T2y4, digits=4)
+print(paste(" y1|y2,y3,y4 = ", T2y1, "   y2|y1,y3,y4 = ", T2y2,    
+  "   y3|y1,y2,y4 = ", T2y3, "   y4|y1,y2,y3 = ", T2y4, sep=""))
+```
+    
+   \begin{enumerate}
+
+
+\setlength{\itemindent}{.5in}
+
+             
+    \item[(g)] Test the significance of y3 and y4 adjusted for y1 and y2.
+    
+    Solution:  The following formula was used to calculate t2 for y3 and y4 adjusted for y1 and y2.
+    
+        \[t^{2}(x|y) = (v - p) \frac{T_{p+1}^{2} - T_{p}^{2} }{v + T_{p}^{2}}\]
+        
+   \end{enumerate}
+
+```{r}
+beetle1 <- matrix(c(189,192,217,221,171,192,213,192,170,201,195,205,180,192,200,192,200,
+181,192,245,260,276,299,239,262,278,255,244,276,242,263,252,283,294,277,287,255,287,137,
+132,141,142,128,147,136,128,128,146,128,147,121,138,138,150,136,146,141,163,217,192,213,
+158,173,201,185,192,186,192,192,167,183,188,177,173,183,198), ncol=4)
+beetle2 <- matrix(c(181,158,184,171,181,181,177,198,180,177,176,192,176,169,164,181,192,
+181,175,197,305,237,300,273,297,308,301,308,286,299,317,312,285,287,265,308,276,278,271,
+303,184,133,166,162,163,160,166,141,146,171,166,166,141,162,147,157,154,149,140,170,209,
+188,231,213,224,223,221,197,214,192,213,209,200,214,192,204,209,235,192,205), ncol=4)
+beetle1mean1 <- mean(beetle1[,1])
+beetle1mean2 <- mean(beetle1[,2])
+beetle1mean3 <- mean(beetle1[,3])
+beetle1mean4 <- mean(beetle1[,4])
+beetle2mean1 <- mean(beetle2[,1])
+beetle2mean2 <- mean(beetle2[,2])
+beetle2mean3 <- mean(beetle2[,3])
+beetle2mean4 <- mean(beetle2[,4])
+y1beetlemean234 <- rbind(beetle1mean2, beetle1mean3, beetle1mean4)
+y2beetlemean234 <- rbind(beetle2mean2, beetle2mean3, beetle2mean4)
+y1beetlemean134 <- rbind(beetle1mean1, beetle1mean3, beetle1mean4)
+y2beetlemean134 <- rbind(beetle2mean1, beetle2mean3, beetle2mean4)
+y1beetlemean124 <- rbind(beetle1mean1, beetle1mean2, beetle1mean4)
+y2beetlemean124 <- rbind(beetle2mean1, beetle2mean2, beetle2mean4)
+y1beetlemean123 <- rbind(beetle1mean1, beetle1mean2, beetle1mean3)
+y2beetlemean123 <- rbind(beetle2mean1, beetle2mean2, beetle2mean3)
+y1beetlemean12 <- rbind(beetle1mean1, beetle1mean2)
+y2beetlemean12 <- rbind(beetle2mean1, beetle2mean2)
+y1beetlemean34 <- rbind(beetle1mean3, beetle1mean4)
+y2beetlemean34 <- rbind(beetle2mean3, beetle2mean4)
+v <- (19 + 20 - 2)
+p <- 4
+Syy12 <- Spooled[-c(3,4), -c(3,4)] 
+InverseSyy12 <- solve(Syy12)
+Syy34 <- Spooled[-c(1,2), -c(1,2)] 
+InverseSyy34 <- solve(Syy34)
+T21 <- (19 * 20/(19 + 20)) 
+T22 <- (t(beetle1mean - beetle2mean))
+T23 <- (beetle1mean - beetle2mean)
+T2 <- T21 * T22 %*% InverseSpooled %*% T23
+
+y12t2 <- ((19 * 20)/(19 + 20)) * t(y1beetlemean12 - y2beetlemean12) %*% InverseSyy12 %*% 
+(y1beetlemean12 - y2beetlemean12)
+T2y12 <- (v - 2) * (T2 - y12t2)/(v + y12t2)
+T2y12 <- round(T2y12, digits=4)
+
+print(paste("y3 and y4 | y1 and y2 =", T2y12, sep=""))
+```
+
+
+
+    

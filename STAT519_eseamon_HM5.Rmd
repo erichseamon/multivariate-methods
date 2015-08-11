@@ -1,0 +1,355 @@
+---
+title: "University of Idaho Statistics 519 Spring 2015 Homework #5"
+author: "Author: David Erich Seamon - erichs@uidaho.edu "
+date: "Due Date: 05/01/2015"
+header-includes:
+- \usepackage{fancyhdr}
+- \usepackage{enumitem}
+- \usepackage{tikz,amsmath}
+- \newcommand\hlight[1]{\tikz[overlay, remember picture,baseline=-\the\dimexpr\fontdimen22\textfont2\relax]\node[rectangle,fill=blue!50,rounded corners,fill opacity = 0.2,draw,thick,text opacity =1] {$#1$};} 
+- \pagestyle{fancy}
+- \usepackage{amsmath}
+- \newcommand\sufr[3][0pt]{$\rule{0pt}{\dimexpr#1+1.4ex\relax}^\frac{#2}{#3}$}
+- \fancyhead[CO,CE]{Erich Seamon - University of Idaho}
+- \fancyfoot[CO,CE]{Statistics 519 - Homework 5 - 05/01/2015}
+- \renewcommand{\headrulewidth}{0.4pt}% Default \headrulewidth is 0.4pt
+- \renewcommand{\footrulewidth}{0.4pt}% Default \footrulewidth is 0pt
+- \fancyfoot[LE,RO]{\thepage}
+output:
+  pdf_document:
+    keep_tex: yes
+    
+    
+
+---
+
+\noindent {\bf ASSIGNED PROBLEM: Fit the five supervised classification models (LDQ, QDA, KDA, 9-nearest ngb, Tree) and two unsupervised clustering models (H. Clustering and kmeans) to the Football data (Table 8.3). For these 7 models, produce 20 m-CV error estimates (by using different m-fold partitions) for m=10 and m=2. }
+
+\bfseries
+\noindent
+\bf
+
+\noindent {\bf Solution - Step 1: Linear Discriminant Analysis with 10-fold CV - performed 20 times.}
+
+
+```{r}
+library(MASS)
+library(ks)
+
+#--10fold CV for LDA
+
+misratelda10_20 <- matrix(NA, nrow=20, ncol=1)
+
+for (j in 1:20) {
+#set.seed(123)
+idx=sample(1:10,90,rep=T)
+#classify=function()
+#{
+dat <- read.table("/nethome/erichs/multivariate_analysis/T8_3_FOOTBALL.DAT")
+
+gp=as.factor(dat[,1])
+training=dat[idx!=1,-1] #--training dataset
+#resu=lda(training,gp[idx!=1])
+
+post.prob=matrix(rep(NA,3*90),ncol=3) #empty matrix for loop population
+
+for(i in 1:10) post.prob[idx==i,]=predict(lda(dat[idx!=i,-1], gp[idx!=i]), 
+dat[idx==i,-1])$posterior #cv loop for lda
+
+pred.gp=apply(post.prob,1,which.max) #--predicted group
+table(gp,pred.gp) #--original vs predicted groups
+
+#mis.rate=(90-sum(diag(table(gp,pred.gp))))/90 #misclassification rate
+
+misratelda10_20[j]=(90-sum(diag(table(gp,pred.gp))))/90 #misclassification rate
+
+#prob=round(post.prob[rbind(1,31,61),], digits=2) #--1st, 31st, and 61st probabilities
+}
+
+#--2fold CV for LDA
+misratelda2_20 <- matrix(NA, nrow=20, ncol=1)
+
+for (j in 1:20) {
+#set.seed(123)
+idx=sample(1:2,90,rep=T)
+#classify=function()
+#{
+dat <- read.table("/nethome/erichs/multivariate_analysis/T8_3_FOOTBALL.DAT")
+
+gp=as.factor(dat[,1])
+training=dat[idx!=1,-1] #--training dataset
+#resu=lda(training,gp[idx!=1])
+
+post.prob=matrix(rep(NA,3*90),ncol=3) #empty matrix for loop population
+
+for(i in 1:2) post.prob[idx==i,]=predict(lda(dat[idx!=i,-1], gp[idx!=i]), 
+dat[idx==i,-1])$posterior #cv loop for lda
+
+pred.gp=apply(post.prob,1,which.max) #--predicted group
+table(gp,pred.gp) #--original vs predicted groups
+
+#mis.rate=(90-sum(diag(table(gp,pred.gp))))/90 #misclassification rate
+
+misratelda2_20[j]=(90-sum(diag(table(gp,pred.gp))))/90 #misclassification rate
+
+#prob=round(post.prob[rbind(1,31,61),], digits=2) #--1st, 31st, and 61st probabilities
+}
+
+```
+
+Answer - Step 1: LDA results are located in the summarized table at the end of the document.
+
+\begin{verbatim}
+
+\end{verbatim}
+
+\bfseries
+\noindent
+\bf
+
+\noindent {\bf Solution - Step 3: Quadratic Discriminant Analysis with 10-fold CV }
+
+```{r}
+#qda
+
+post.probq=matrix(rep(NA,3*90),ncol=3) #empty matrix for loop population
+
+for(i in 1:10) post.probq[idx==i,]=predict(qda(dat[idx!=i,-1], 
+gp[idx!=i]), dat[idx==i,-1])$posterior # cv loop for qda
+
+predq.gp=apply(post.probq,1,which.max) # predicted groups
+table(gp,predq.gp)#--original vs predicted groups
+
+mis.rateq=(90-sum(diag(table(gp,predq.gp))))/90 #--misclassification rate
+
+probq=round(post.probq[rbind(1,31,61),], digits=2) #--1st, 31st, and 61st probabilities
+```
+
+Answer - Step 3: QDA results are located in the summarized table at the end of the document.
+
+\begin{verbatim}
+
+\end{verbatim}
+
+\bfseries
+\noindent
+\bf
+
+\noindent {\bf Solution - Step 4: Kernel Discriminant Analysis with 10-fold CV }
+
+```{r}
+library(MASS)
+library(ks)
+dat <- read.table("/nethome/erichs/multivariate_analysis/T8_3_FOOTBALL.DAT")
+#set.seed(8193)
+#idx=sample(1:10,90,rep=T)
+gp=as.factor(dat[,1])
+post.probkdenew=matrix(rep(NA,1*90),ncol=1)
+
+post.probkdenew1=matrix(rep(NA,1*90),ncol=1) #empty matrix for loop population
+post.probkdenew2=matrix(rep(NA,1*90),ncol=1) #empty matrix for loop population
+post.probkdenew3=matrix(rep(NA,1*90),ncol=1) #empty matrix for loop population
+
+for (i in 1:10){ #CV loop for kde.  Requires three kde for training gp1, 2, and 3
+  training=dat[idx!=i,]
+  test=dat[idx==i,-1]
+  H.scv <- Hscv(training)
+  #--pull out 1 2 and 3 from training
+  training1 <- subset(training, V1==1)
+  training1 <- training1[-1]
+  H.scv <- Hscv(training1)
+  training2 <- subset(training, V1==2)
+  training2 <- training2[-1]
+  H.scv <- Hscv(training2)
+  training3 <- subset(training, V1==3)
+  training3 <- training3[-1]
+  H.scv <- Hscv(training3)
+  #run kde for each of the three grouped training datasets
+  post.probkdenew1[idx==i,] <- kde(x=training1, eval.points=test)$estimate
+  post.probkdenew2[idx==i,] <- kde(x=training2, eval.points=test)$estimate
+  post.probkdenew3[idx==i,] <- kde(x=training3, eval.points=test)$estimate
+  #post.probkdenew[idx==i,] <- predict(fhat, x=test)
+}
+#combine the estimates for each of the groups
+post.probktotal <- cbind(post.probkdenew1, post.probkdenew2, post.probkdenew3)
+
+post.probfinal1=matrix(rep(NA,1*90),ncol=1) #-create empty matrix for group 1
+post.probfinal2=matrix(rep(NA,1*90),ncol=1) #-create empty matrix for group 2
+post.probfinal3=matrix(rep(NA,1*90),ncol=1) #-create empty matrix for group 3
+
+
+for (i in 1:90){ #-generatetes posterior probabilities from estimates - gp1
+  post.probfinal1[i,]=round((post.probkdenew1[i,]*.33)/sum(post.probktotal[i,]/3), 
+  digits=5)
+}
+
+for (i in 1:90){#-generatetes posterior probabilities from estimates - gp2
+  post.probfinal2[i,]=round((post.probkdenew2[i,]*.33)/sum(post.probktotal[i,]/3), 
+  digits=5)
+}
+
+for (i in 1:90){#-generatetes posterior probabilities from estimates - gp3
+  post.probfinal3[i,]=round((post.probkdenew3[i,]*.33)/sum(post.probktotal[i,]/3), 
+  digits=5)
+}
+#combined posterior probabilities
+post.probfinalz <- cbind(post.probfinal1, post.probfinal2, post.probfinal3)
+
+predkde1.gp=apply(post.probfinalz,1,which.max)  #predicted groups
+table(gp,predkde1.gp)#--original vs predicted groups
+
+mis.ratekde= (90-sum(diag(table(gp,predkde1.gp))))/90 #-misclassifcation rate
+probkde=round(post.probfinalz[rbind(1,31,61),], digits=2)
+```
+
+Answer - Step 4: KDA results are located in the summarized table at the end of the document.
+
+\begin{verbatim}
+
+\end{verbatim}
+
+\bfseries
+\noindent
+\bf
+
+\noindent {\bf Solution - Step 5: Nearest Neighbor Classification - K = 9 }
+
+```{r}
+library(MASS)
+#set.seed(123)
+library(ks)
+library(hydroTSM)
+dat <- read.table("/nethome/erichs/multivariate_analysis/T8_3_FOOTBALL.DAT")
+
+gp=as.factor(dat[,1])
+
+training=dat[idx!=1,-1]#-training
+resu=lda(training,gp[idx!=1])
+
+post.prob=matrix(rep(NA,3*90),ncol=3) #-empty matrix for loop population
+
+for (i in 1:10){#-loop for 10 fold CV for knn
+  test <- dat[idx==i,-1]
+  training <- dat[idx!=i,-1]
+  S <- cov(dat[idx!=i,-1]) 
+  jto <- 90-length(test[,1])
+  jto2 <- length(test[,1])
+  resu=matrix(NA,ncol=jto2, nrow=jto)
+  resugroup=matrix(NA,ncol=1, nrow=jto)
+  assign(paste("resu", i, sep = ""), resu)
+   for (j in 1:jto){   
+  resucolumns <- mahalanobis(dat[idx==i,-1], as.numeric(dat[idx!=i,-1][j,]), S)
+  colnames(resu) <- names(resucolumns)
+  resu[j,]=mahalanobis(dat[idx==i,-1], as.numeric(dat[idx!=i,-1][j,]), S)
+  resugroup= as.matrix(dat[idx!=i,1])
+   }
+  resu <- cbind(resu, resugroup)
+  assign(paste("resu", i, sep=""), resu)
+}
+#loop to restructure distances and calculate probabilities
+knnprob=t(matrix(NA,ncol=90, nrow=3))
+for (i in 1:10) {
+  jto3 <- nrow(dat[idx==i,-1])
+    for (j in 1:jto3) {
+      resuax <- data.frame(get(paste("resu", i, sep = "")))
+      resua <- resuax[order(resuax[,j]) , ]
+      vectornames <- as.matrix(names(resua))
+      vectornames2 <- rm1stchar(vectornames)
+      vectornames3 <- as.matrix(rm1stchar(vectornames[1,1]))
+      vectornames4 <- as.numeric(c(vectornames3[1,1], vectornames2[-1]))
+      vectornames5 <- as.matrix(vectornames4[1:jto3])
+      resua1 <- subset(resua, select = j)
+      resua2 <- subset(resua, select = jto3+1)
+      resua <- cbind(resua1, resua2)
+      resua <- as.matrix(resua[1:9,])
+        for (k in 1:3){ #sub-loop that takes top 9 distances, and creates probabilities
+          xx <- vectornames5[j,]
+          knnprob[xx,k] <- (length(which(resua[,2] == k)))/9
+        }
+      assign(paste("resua", j, sep=""), resua)
+    }
+}
+predknn.gp=apply(knnprob,1,which.max) #-predicted groups
+table(gp,predknn.gp) #-original vs predicted groups
+
+mis.rateknn=(90-sum(diag(table(gp,predknn.gp))))/90 #-misclassification rate
+probknn=round(knnprob[rbind(1,31,61),], digits=2)
+```
+
+Answer - Step 5: KNN results are located in the summarized table at the end of the document.
+
+\begin{verbatim}
+
+\end{verbatim}
+
+\bfseries
+\noindent
+\bf
+
+\noindent {\bf Solution - step 6: Tree Classification }
+
+
+```{r}
+library(rpart)
+dat <- read.table("/nethome/erichs/multivariate_analysis/T8_3_FOOTBALL.DAT")
+colnames(dat) <- c("Group", "WDIM", "CIRCUM", "FBEYE", "EYEHD", "EARHD", "JAW")
+
+gp=as.factor(dat[,1])
+
+training=dat[idx!=1,-1]
+
+post.probtree=matrix(rep(NA,3*90),ncol=3)
+
+for(i in 1:10) post.probtree[idx==i,]=predict(rpart(Group~., dat[idx!=i,], 
+method="class"), dat[idx==i,-1], type="prob")
+
+predtree.gp=apply(post.probtree,1,which.max)
+table(gp,predtree.gp)
+
+mis.ratetree=(90-sum(diag(table(gp,predtree.gp))))/90
+probtree=round(post.probtree[rbind(1,31,61),], digits=2)
+
+```
+
+Answer - Step 6: Tree Classification results are located in the summarized table at the end of the document.
+
+\begin{verbatim}
+
+\end{verbatim}
+
+\bfseries
+\noindent
+\bf
+
+\noindent {\bf Final Summarized Table with all five classification model outputs.}
+
+```{r}
+
+#---summarized table
+
+predicted <- as.matrix(c(1,2,2,1,3,2,1,3,2,1,2,2,1,2,2))
+models <- as.matrix(c("LDA - 1st Obs","LDA - 31st Obs","LDA - 61st Obs",
+"QDA - 1st Obs","QDA - 31st Obs","QDA - 61st Obs","KDA - 1st Obs",
+"KDA - 31st Obs","KDA - 61st Obs","KNN - 1st Obs","KNN - 31st Obs",
+"KNN - 61st Obs", "Tree - 1st Obs","Tree - 31st Obs","Tree - 61st Obs" ))
+summtable <- rbind(prob, probq, probkde, probknn, probtree)
+summtable <- data.frame(cbind(models, summtable, predicted))
+colnames(summtable) <- c("Model", "Group 1", "Group 2", "Group 3", "Predicted Group")
+
+models <- as.matrix(c("LDA", "QDA", "KDA", "KNN", "Tree"))
+errortable <- round(rbind(mis.rate, mis.rateq, mis.ratekde, mis.rateknn, mis.ratetree), 
+digits=2)
+errortable <- data.frame(cbind(models, errortable))
+colnames(errortable) <- c("Model", "Misclassification Rate")
+
+library(gridExtra)
+grid.table(summtable)
+```
+
+\bfseries
+\noindent
+\bf
+
+```{r}
+grid.table(errortable)
+```

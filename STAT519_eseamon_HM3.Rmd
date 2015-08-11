@@ -1,0 +1,1200 @@
+---
+title: "University of Idaho Statistics 519 Spring 2015 Homework #3"
+author: "Author: David Erich Seamon - erichs@uidaho.edu "
+date: "Due Date: 03/13/2015"
+header-includes:
+- \usepackage{fancyhdr}
+- \usepackage{enumitem}
+- \usepackage{tikz,amsmath}
+- \newcommand\hlight[1]{\tikz[overlay, remember picture,baseline=-\the\dimexpr\fontdimen22\textfont2\relax]\node[rectangle,fill=blue!50,rounded corners,fill opacity = 0.2,draw,thick,text opacity =1] {$#1$};} 
+- \pagestyle{fancy}
+- \usepackage{amsmath}
+- \newcommand\sufr[3][0pt]{$\rule{0pt}{\dimexpr#1+1.4ex\relax}^\frac{#2}{#3}$}
+- \fancyhead[CO,CE]{Erich Seamon - University of Idaho}
+- \fancyfoot[CO,CE]{Statistics 519 - Homework 3 - 03/13/2015}
+- \renewcommand{\headrulewidth}{0.4pt}% Default \headrulewidth is 0.4pt
+- \renewcommand{\footrulewidth}{0.4pt}% Default \footrulewidth is 0pt
+- \fancyfoot[LE,RO]{\thepage}
+output:
+  pdf_document:
+    keep_tex: yes
+    
+    
+
+---
+
+\noindent {\bf ASSIGNED PROBLEMS: 5.13, 5.21, 6.9, 6.27, 6.28, 6.31, 6.33  (plus: carry out
+nonparametric hypotheses testing for parallelism, equal levels, and flatness) }
+
+\begin{enumerate}\bfseries
+
+\setlength{\itemindent}{.5in}
+    \item [Problem 5.13]
+    
+    \end{enumerate}
+    \begin{enumerate}
+    
+
+    \item[] For the probe word data in Table 3.5, test:
+    
+    \[H_{0}: \mu_{1} = \mu_{2} = ... = \mu_{5},\;using\;T^{2}\]
+    
+    Solution:
+  
+    \end{enumerate}
+
+```{r}
+probe <- matrix(c(51,27,37,42,27,43,41,38,36,26,29,36,20,22,36,18,32,
+22,21,23,31,20,50,26,41,32,33,43,36,31,27,31,25,35,17,37,34,14,35,25,
+20,25,32,26,42,27,30,27,29,40,38,16,28,36,25), ncol=5)
+p <- 5
+v <- 10
+n <- 11
+C <- matrix(c(1,0,0,0,-1,1,0,0,0,-1,1,0,0,0,-1,1,0,0,0,-1), ncol=5)
+Ct <- t(C)
+mean1 <- mean(probe[,1])
+mean2 <- mean(probe[,2])
+mean3 <- mean(probe[,3])
+mean4 <- mean(probe[,4])
+mean5 <- mean(probe[,5])
+y <- matrix(c(mean1, mean2, mean3, mean4, mean5), ncol=1)
+yt <- t(y)
+S <- var(probe)
+inverseS <- solve(S)
+t1 <- t(C %*% y)
+t2 <- solve((C %*% S %*% Ct)/n)
+t3 <- (C %*% y)
+T2 <- t1 %*% t2 %*% t3 #---perform T2 calc using y mean vector, S, and contrast matrix
+  dimx<-dim(probe)
+  fval<-(dimx[1]-dimx[2])*T2/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pval<-1-pf(fval,df1,df2)
+  cat("T-squared=",T2,fill=TRUE)
+  df<-cbind(df1,df2)
+  cat("F-value=",fval," df=",df," p-value=",pval, "  NOT SIGNIFICANT")
+```
+
+  \begin{enumerate}\bfseries
+
+\setlength{\itemindent}{.5in}
+\item[]
+    \item [Problem 5.21]
+    
+    \end{enumerate}
+    \begin{enumerate}
+    
+
+    \item[] Each of 15 students wrote an informal and a formal essay (Kramer 1972, p. 100).  The variables recorded were the number of words and the number of verbs:
+    
+    \[y_{1} = number\;of\;words\;in\;the\;informal\;essay,\]
+    \[y_{2} = number\;of\;verbs\;in\;the\;informal\;essay,\]
+    \[y_{3} = number\;of\;words\;in\;the\;formal\;essay,\]
+    \[y_{4} = number\;of\;verbs\;in\;the\;formal\;essay.\]
+    
+    The data are given in Table 5.9. Since each student wrote both types of essays, the observation vectors are paired, and we use the paired comparison test.
+    
+    \item[]
+    
+  
+    
+    \item[(a)] Test:
+    
+    \[H_{0}: \mu_{d} = 0\]
+
+    Solution:
+    
+    In order to test the above hypothesis, we need to use the following equation:
+    
+    \[T = \bar{d}'\begin {pmatrix} S_{d} \\ \hline n \end{pmatrix}^{-1} \bar{d}\] 
+    
+    
+    \end{enumerate}
+    
+```{r}
+essay <- read.table("/nethome/erichs/multivariate_analysis/T5_9_ESSAY.DAT")
+essay <- essay[,2:5]
+
+diff1 <- matrix(c(11,-5,-80,-105,-57,-39,-35,-35,-26,3,-61,0,-40,-26,3), ncol=1)
+diff2 <- matrix(c(5,-1,-8,-15,-7,-9,-1,-3,-5,4,-2,5,-6,-2,-8), ncol=1)
+
+diff <- matrix(c(11,-5,-80,-105,-57,-39,-35,-35,-26,3,-61,0,-40,-26,
+3,5,-1,-8,-15,-7,-9,-1,-3,-5,4,-2,5,-6,-2,-8), ncol=2)
+
+C <- matrix(c(1,0,-1,0,0,-1), ncol=3)
+Ct <- t(C)
+p <- 2
+n <- 15
+v <- 14
+mean1 <- mean(essay[,1])
+mean2 <- mean(essay[,2])
+mean3 <- mean(essay[,3])
+mean4 <- mean(essay[,4])
+y1 <- mean1 - mean3
+y2 <- mean2 - mean4
+Ta <- (n * n)/(n + n)
+
+#--calculate dbar
+dbar1 <- (1/15) * (sum(diff1))
+dbar1 <- t(dbar1)
+dbar2 <- (1/15) * (sum(diff2))
+dbar2 <- t(dbar2)
+dbar <- rbind(dbar1,dbar2)
+dbart <- t(rbind(dbar1,dbar2))
+
+#--Calculate Sd
+x<- var(diff)
+xx <- sqrt(x)
+diffvar <- var(diff) 
+diffvar <- solve(diffvar/n)
+
+#--Calc T2
+T2 <- dbart %*% diffvar %*% dbar
+#print(paste("T2 = " , T2))
+ dimx<-dim(essay)
+  fval<-(dimx[1]-dimx[2])*T2/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pval<-1-pf(fval,df1,df2)
+  cat("T-squared=",T2,fill=TRUE)
+  df<-cbind(df1,df2)
+  cat("F-value=",fval," df=",df," p-value=",pval, "  NOT SIGNIFICANT")
+```
+    
+  \begin{enumerate}
+    \item[]
+    \item[(b)] Find the discriminant function coefficient vector.
+    \item[]
+    \item[]
+    Solution:  
+    \item[]
+    
+    
+    we calculate the discriminant function coefficient vector with the following equation:
+    
+    \[a = S_{d}^{-1} \bar{d}\]
+    
+    \end{enumerate}
+    
+```{r}
+essay <- read.table("/nethome/erichs/multivariate_analysis/T5_9_ESSAY.DAT")
+essay <- essay[,2:5]
+diff1 <- matrix(c(11,-5,-80,-105,-57,-39,-35,-35,-26,3,-61,0,-40,-26,3), ncol=1)
+diff2 <- matrix(c(5,-1,-8,-15,-7,-9,-1,-3,-5,4,-2,5,-6,-2,-8), ncol=1)
+diff <- matrix(c(11,-5,-80,-105,-57,-39,-35,-35,-26,3,-61,0,-40,-26,3,5,
+-1,-8,-15,-7,-9,-1,-3,-5,4,-2,5,-6,-2,-8), ncol=2)
+C <- matrix(c(1,0,-1,0,0,-1), ncol=3)
+Ct <- t(C)
+p <- 2
+n <- 15
+v <- 14
+mean1 <- mean(essay[,1])
+mean2 <- mean(essay[,2])
+mean3 <- mean(essay[,3])
+mean4 <- mean(essay[,4])
+y1 <- mean1 - mean3
+y2 <- mean2 - mean4
+Ta <- (n * n)/(n + n)
+
+#--calculate dbar
+dbar1 <- (1/15) * (sum(diff1))
+dbar1 <- t(dbar1)
+dbar2 <- (1/15) * (sum(diff2))
+dbar2 <- t(dbar2)
+dbar <- rbind(dbar1,dbar2)
+dbart <- t(rbind(dbar1,dbar2))
+
+#--Calculate Sd
+x<- var(diff)
+xx <- sqrt(x)
+diffvar <- var(diff)
+diffvar2 <- diffvar
+diffvar <- solve(diffvar/n)
+
+#---discriminant function coef vector
+a <- solve(diffvar2) %*% dbar 
+a
+```
+    
+  \begin{enumerate}
+    \item[]
+    
+    \item[(c)] Do a univariate t-test on each dj.
+    \item[]
+    
+    Solution:
+    \item[]
+    
+    \end{enumerate}
+
+```{r}
+t1  <- t.test(diff[,1])
+t1a <- round(t1$statistic, digits=4)
+t1p <- round(t1$p.value, digits=4)
+t2  <- t.test(diff[,2])
+t2a <- round(t2$statistic, digits=4)
+t2p <- round(t2$p.value, digits=4)
+cat(paste(" t1 = " , t1a , "  pvalue = ", t1p,  "   SIGNIFICANT", "\n", " t2 = " , 
+t2a, "  pvalue = ", t2p, "   SIGNIFICANT", sep=""))
+```
+
+  \begin{enumerate}\bfseries
+
+\setlength{\itemindent}{.5in}
+\item[]
+\item[]
+    \item [Problem 6.9]
+    
+    \end{enumerate}
+    \begin{enumerate}
+   
+   \item[] Show that for two groups:
+   
+    \[H = \sum\limits_{i=1}^{2} n_{i}(\bar{y}_{i.} - \bar{y}_{..})(\bar{y}_{i.} - \bar{y}_{..})'\]
+               
+               can be expressed as:
+               
+    \[H = [n_{1}n_{2}/(n_{1} + n_{2})](\bar{y}_{1.} - \bar{y}_{..})(\bar{y}_{1.} - \bar{y}_{2.})'\]
+     
+               Solution:
+               
+               Assuming that:
+               \[\bar{y}_{..} = \frac{n_{1}\bar{y}_{1.} + n_{2}\bar{y}_{2.}}{n_{1} + n_{2}}\]
+               
+               then the above can be substituted for ybar, resulting in:
+               
+               \[\bar{y}_{1.} - \frac{n_{1}\bar{y}_{1.} + n_{2}\bar{y}_{2.}}{n_{1} + n_{2}} = \frac{n_{2}(\bar{y}_{1.} - \bar{y}_{2.}}{n_{1} + n_{2}}\]
+               
+               For two groups (n=2), if we plug in the above, results in:
+               
+               \[\frac{n_{1}n_{2}^{2}}{(n_{1} + n_{2})^{2}}(\bar{y}_{1.} - \bar{y}_{2.})(\bar{y}_{1.} - \bar{y}_{2.})'\;and\;\frac{n_{1}^{2}n_{2}}{(n_{1} + n_{2})^{2}}(\bar{y}_{1.} - \bar{y}_{2.})(\bar{y}_{1.} - \bar{y}_{2.})'\]
+
+    \end{enumerate}
+
+   \begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+                
+  \item [Problem 6.27]
+    \end{enumerate}
+    \begin{enumerate}
+
+        \item[(a)] Compare the three methods using all four MANOVA tests.
+        
+        Solution:
+        
+    \end{enumerate}
+
+```{r}
+fish <- read.table("/nethome/erichs/multivariate_analysis/T6_17_FISH.DAT")
+#--factorize column 1
+p <- 4
+n <- 36
+v <- 35
+fish1 <- fish[1:12,]
+fish2 <- fish[13:24,]
+fish3 <- fish[25:36,]
+fishfactor <- factor(fish[,1])
+fish <- cbind(fish[2:5])
+fish <- as.matrix(fish)
+#method <- factor(gl(3,18,36,labels=c("M1","M2","M3")))
+#--Run manovas
+sumfish <- summary(manova(fish ~ fishfactor))
+sumfish_Wilks <- summary(manova(fish ~ fishfactor),test="W")
+sumfish_Hotelling <- summary(manova(fish ~ fishfactor),test="H")
+sumfish_Roy <- summary(manova(fish ~ fishfactor),test="R")
+sumfish_Pillai <- summary(manova(fish ~ fishfactor),test="P")
+sumfishH <- matrix(c(1.0505556,2.1733333,-1.3755556,-0.7602778,2.173333,4.880000,
+-2.373333,-1.256667,-1.375556,-2.373333,2.382222,1.384444,-0.7602778,-1.2566667,
+1.3844444,0.8105556), ncol=4)
+sumfishE <- matrix(c(13.408333,7.723333,8.675000,5.864167,7.723333,8.480000,
+7.526667,6.213333,8.675000,7.526667,11.607500,7.037500,5.864167,6.213333,
+7.037500,10.565833), ncol=4)
+inversesumfishE <- solve(sumfishE)
+eh <- inversesumfishE %*% sumfishH
+customRoy <- sumfish$Eigenvalues[,1]/(1 + sumfish$Eigenvalues[,1])
+#--Pvalue calcs
+print(sumfish$SS)
+pvalue <- 1 - pf((v-p+1)/(v*p)+customRoy, df1=p, df2=v-p+1)
+cat(paste(" Wilks = " , sumfish_Wilks$stats[3] , " P-value = ", sumfish_Wilks$stats[11], 
+" - Significant", "\n", " Hotelling = " , sumfish_Hotelling$stats[3] , 
+"  P-value = ", sumfish_Hotelling$stats[11], " - Significant", "\n", 
+" Roy = " , sumfish_Roy$stats[3] , "  P-value = ", sumfish_Roy$stats[11], 
+" - Significant", "\n", 
+" Pillai = " , sumfish_Pillai$stats[3] , "  P-value = ", sumfish_Pillai$stats[11], 
+" - Significant", "\n", " Corrected Roy = " , customRoy , "  P-value = ", 
+sumfish_Roy$stats[11], " - Significant", "\n",sep=""))
+```
+  
+   \setlength{\itemindent}{.5in}
+                
+  (b) Compute the following measures of multivariate association: 
+  
+  \[\eta_{\Lambda}^{2},\;\eta_{\theta}^{2},\;A_{\Lambda},\;A_{LH},\;A_{P}\]
+  
+  Solution:
+  
+  \[\eta_{\Lambda}^{2} = 1 - \Lambda = 1 - .224 = .776\]
+  \[\eta_{\theta}^{2} = \theta = .746\]
+  \[A_{\Lambda} = 1 - \Lambda^{1/s} = 1 - \Lambda^{1/2} = .526\]
+  \[A_{LH} = \frac{U^{(s)}/s}{1 + U^{(s)}/s} = \frac{3.08/2}{1 + 3.08/2} = .606\]
+
+
+(c) Based on the eigenvalues, is the essential dimensionality of the space containing the mean vectors equal to 1 or 2?
+
+Solution:
+
+The positive eigenvalues of the E-1H matrix are 2.95 and .127 - listed below.  As such, the dimensionality is 1.
+
+```{r}
+sumfish$Eigenvalues
+```
+          
+(d) Using contrasts, test the followng two comparison methods: 1 and 2 vs. 3, and 1 vs. 2.
+
+
+```{r}
+fishy11mean <- mean(fish1[,2])
+fishy12mean <- mean(fish1[,3])
+fishy13mean <- mean(fish1[,4])
+fishy14mean <- mean(fish1[,5])
+fishy21mean <- mean(fish2[,2])
+fishy22mean <- mean(fish2[,3])
+fishy23mean <- mean(fish2[,4])
+fishy24mean <- mean(fish2[,5])
+fishy31mean <- mean(fish3[,2])
+fishy32mean <- mean(fish3[,3])
+fishy33mean <- mean(fish3[,4])
+fishy34mean <- mean(fish3[,5])
+fishy1mean <- c(fishy11mean, fishy12mean, fishy13mean, fishy14mean)
+fishy2mean <- c(fishy21mean, fishy22mean, fishy23mean, fishy24mean)
+fishy3mean <- c(fishy31mean, fishy32mean, fishy33mean, fishy34mean)
+n <- 36
+v <- 35
+N <- (33 - 4 - 1)/2
+m <- ((2 - 4)  - 1)/2
+Ve <- 3 * (12 - 1)
+Vh <- 3 - 1
+p <- 4
+s <- min(Vh, p)
+
+cy <- (1 * fishy1mean) + (1 * fishy2mean) - 2 * (fishy3mean)
+cy <- t(cy)
+cy <- t(cy)
+cy2 <- (1 * fishy1mean) - (fishy2mean)
+cy2 <- t(cy2)
+cy2 <- t(cy2)
+df1=p
+df2=v-p+1
+H1 <- (12/6) * cy %*% t(cy)
+H1 <- (12/6) * ((1 * fishy1mean) + (1 * fishy2mean) - 2 * (fishy3mean)) %*% 
+t(((1 * fishy1mean) + (1 * fishy2mean) - 2 * (fishy3mean)))
+WilksH1 <- det(sumfishE)/det(sumfishE + H1)
+H1F <- ((N - p)/p*(N-1))*WilksH1
+H1P <- pf(n, df1, df2, H1F, lower.tail=F) - (1-pf(36, 4, 32))
+eh1 <- solve(sumfishE) %*% H1
+eigeneh <- eigen(eh1)
+RoyH1 <- eigeneh$values[1]/(1 + eigeneh$values[1])
+RoyH1pvalue <- 1 - pf((v-p+1)/(v*p)+RoyH1, df1=p, df2=v-p+1)
+PillaiH1 <- eigeneh$values[1]/(1 + eigeneh$values[1])
+PillaiH1pvalue <- 1 - pf((v-p+1)/(v*p)+PillaiH1, df1=p, df2=v-p+1)
+HotellingH1 <- sum(diag(eh1))
+HotellingH1pvalue <- 1 - pf((v-p+1)/(v*p)+HotellingH1, df1=p, df2=v-p+1)
+N <- (33 - 4 - 1)/2
+m <- ((2 - 4)  - 1)/2 # Vh is 2 and p = 4 - so m = 0 is used in table lookup
+Ve <- 3 * (12 - 1)
+Vh <- 3 - 1
+p <- 4
+s <- min(Vh, p)
+
+
+#--paste values
+cat(paste("Methods 1 and 2 vs 3", "\n", " WilksH1 = " , 
+WilksH1 ,  "   pvalue = ", H1P, "  SIGNIFICANT", "\n", 
+" RoyH1 = " , RoyH1 ,  "\n", 
+" PillaiH1 = " , PillaiH1 ,  "\n", 
+" HotellingH1 = " , HotellingH1, sep=""))
+
+
+H2 <- (12/2) * cy2 %*% t(cy2)
+WilksH2 <- det(sumfishE)/det(sumfishE + H2)
+H2F <- ((N - p)/p*(N-1))*WilksH2
+H2P <- pf(n, df1, df2, H2F, lower.tail=F) - (1-pf(36, 4, 32))
+eh2<- solve(sumfishE) %*% H2
+eigeneh2 <- eigen(eh2)
+RoyH2 <- eigeneh2$values[1]/(1 + eigeneh2$values[1])
+PillaiH2 <- eigeneh2$values[1]/(1 + eigeneh2$values[1])
+HotellingH2 <- sum(diag(eh2))
+#--paste values
+
+
+
+cat(paste("Methods 1 vs. 2", "\n", " WilksH2 = " , WilksH2 , 
+"   pvalue = ", H2P, "  SIGNIFICANT", "\n", 
+" RoyH2 = " , RoyH2 , "\n", " PillaiH2 = " , PillaiH2 , "\n", 
+" HotellingH2 = " , HotellingH2 , sep=""))
+```
+        
+
+  \setlength{\itemindent}{.5in}
+
+        
+(e) If any of the four tests in (a) is significant, run an ANOVA F-test on each yi and examine the discriminant function.
+   
+   Solution:
+  
+  
+
+```{r}
+newfish <- data.frame(fish)
+aovfish <- aov(fish ~ fishfactor, data=newfish)
+summary(aovfish)
+
+#---discriminant function calculation
+eh_eigenvector <- eigen(eh)
+eh_eigenvector <- eh_eigenvector$vectors
+api <- t(eh_eigenvector)
+api1 <- api[1,]
+#---print a'
+api1 
+```
+ 
+
+ \setlength{\itemindent}{.5in}
+        
+   (f) Test the significance of y3 and y4 adjusted for y1 and y2.
+   
+   Solution:
+   
+
+```{r}
+y12W <- summary(manova(fish[,1:2] ~ fishfactor), test="W")
+y1234W <- summary(manova(fish ~ fishfactor),test="W")
+sigtest <- y1234W$stats[3]/y12W$stats[3]
+dimx <- dim(fish)
+fval<-(dimx[1]-dimx[2])*sigtest/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pval<-pf(fval,df1,df2)
+  cat(paste("Testing Significance of y3 and y4 adjusted for y1 and y2", 
+  "\n", "T-squared=",sigtest))
+  df<-cbind(df1,df2)
+  cat("F-value=",fval," df=",df," p-value=",pval,  "  SIGNIFICANT")
+```
+ 
+ 
+ \setlength{\itemindent}{.5in}
+        
+   (g) Test the significance of each variable adjusted for the other three.
+   
+   Solution:
+   
+```{r}
+y234W <- summary(manova(fish[,c(2,3,4)] ~ fishfactor), test="W")
+y134W <- summary(manova(fish[,c(1,3,4)] ~ fishfactor), test="W")
+y124W <- summary(manova(fish[,c(1,2,4)] ~ fishfactor), test="W")
+y123W <- summary(manova(fish[,c(1,2,3)] ~ fishfactor), test="W")
+y1234W <- summary(manova(fish ~ fishfactor),test="W")
+y1adjust <- y1234W$stats[3]/y234W$stats[3]
+
+  dimx <- dim(fish)
+  fvaly1<-(dimx[1]-dimx[2])*y1adjust/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pvaly1<- pf(fvaly1,df1,df2)
+  df<-cbind(df1,df2)
+
+y1adjustF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * y1adjust
+y1adjustP <- pf(y1adjustF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+y2adjust <- y1234W$stats[3]/y134W$stats[3]
+
+  dimx <- dim(fish)
+  fvaly2<-(dimx[1]-dimx[2])*y2adjust/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pvaly2<- pf(fvaly2,df1,df2)
+  df<-cbind(df1,df2)
+
+y2adjustF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * y2adjust
+y2adjustP <- pf(y2adjustF, 2, 62, lower.tail=F) #- (1-pf(y2adjust, 2, 36))
+y3adjust <- y1234W$stats[3]/y124W$stats[3]
+
+  dimx <- dim(fish)
+  fvaly3<-(dimx[1]-dimx[2])*y3adjust/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pvaly3<- pf(fvaly3,df1,df2)
+  df<-cbind(df1,df2)
+
+y3adjustF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * y3adjust
+y3adjustP <- pf(y3adjustF, 2, 30, lower.tail=F) #- (1-pf(36, 2, 30))
+y4adjust <- y1234W$stats[3]/y123W$stats[3]
+
+  dimx <- dim(fish)
+  fvaly4<-(dimx[1]-dimx[2])*y4adjust/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pvaly4<-pf(fvaly4,df1,df2)
+  df<-cbind(df1,df2)
+
+y4adjustF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * y4adjust
+y4adjustP <- pf(y4adjustF, 2, 30, lower.tail=F) #- (1-pf(36, 2, 30))
+cat(paste(" y1 | y2, y3, y4  = " , y1adjust , " pvalue = ", pvaly1, 
+"  NOT SIGNIFICANT ", "\n", " y2 | y1, y3, y4 =  " , y2adjust , 
+"  pvalue = ", pvaly2,   "  SIGNIFICANT ", "\n", 
+" y3 | y1, y2, y4 =  " , y3adjust , " pvalue = ", pvaly3, 
+" SIGNIFICANT ", "\n", " y4 | y1, y2, y3 =  " , y4adjust , 
+" pvalue =  ", pvaly4, "  NOT SIGNIFICANT ", "\n", sep=""))
+```   
+ 
+   \begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+                
+  \item [Problem 6.28]
+    \end{enumerate}
+    \begin{enumerate}
+        
+   \item[] Table 6.18 gives data from a two-way fixed effects manova on snap beans shwing the results of four variables: y1 = yield earliness, y2 = specific leaf area earliness, y3 = total yield, and y4 = average specific leaf area.  The factors are sowing date (S) and variety (V).
+   \\
+   
+   (a) Test for main effects and interaction using all four MANOVA statistics.
+   
+   Solution:
+     
+       \end{enumerate}
+
+```{r}
+snapbean <- read.table("/nethome/erichs/multivariate_analysis/T6_18_SNAPBEAN.DAT")
+colnames(snapbean) <- c("S", "V", "obs", "y1", "y2", "y3", "y4")
+snapbean1 <- as.matrix(cbind(snapbean[,4:7]))
+snapbeanSfactor <- factor(snapbean[,1])
+snapbeanVfactor <- factor(snapbean[,2])
+effectW <- summary(manova(snapbean1 ~ snapbeanSfactor*snapbeanVfactor), test="W")
+effectH <- summary(manova(snapbean1 ~ snapbeanSfactor*snapbeanVfactor), test="H")
+effectR <- summary(manova(snapbean1 ~ snapbeanSfactor*snapbeanVfactor), test="R")
+effectP <- summary(manova(snapbean1 ~ snapbeanSfactor*snapbeanVfactor), test="P")
+effectR_corrected <- effectW$Eigenvalues[,1]/(1 + effectW$Eigenvalues[,1])
+
+
+effectW
+effectH
+effectR
+effectR_corrected
+effectP
+```
+
+NOTE: as listed above via the respective pvalues - all outcomes are SIGNIFICANT.
+
+ 
+ \begin{enumerate}
+     
+\setlength{\itemindent}{.5in}
+    \item[]
+
+    \item[(b)] Compare variety 2 with varieties 1 and 3 by means of a test on a contrast.
+    \item[]
+    
+    Solution
+    \end{enumerate}
+
+```{r}
+snapbean <- read.table("/nethome/erichs/multivariate_analysis/T6_18_SNAPBEAN.DAT")
+snapbean1 <- as.matrix(snapbean[4:7])
+snap1 <- snapbean[c(1:5,16:20,31:35,46:50),]
+snap2 <- snapbean[c(6:10,21:25,36:40,51:55),]
+snap3 <- snapbean[c(11:15,26:30,41:45,56:60),]
+
+snapall <- rbind(snap1,snap2,snap3)
+
+snapbeanVfactor <- factor(snapall[,2])
+sumsnap <- summary(manova(snapbean1 ~ snapbeanVfactor), test="W")
+sumsnapE <- sumsnap$SS$Residuals
+
+snapy11mean <- mean(snap1[,4])
+snapy12mean <- mean(snap1[,5])
+snapy13mean <- mean(snap1[,6])
+snapy14mean <- mean(snap1[,7])
+
+snapy21mean <- mean(snap2[,4])
+snapy22mean <- mean(snap2[,5])
+snapy23mean <- mean(snap2[,6])
+snapy24mean <- mean(snap2[,7])
+
+snapy31mean <- mean(snap3[,4])
+snapy32mean <- mean(snap3[,5])
+snapy33mean <- mean(snap3[,6])
+snapy34mean <- mean(snap3[,7])
+
+snapy1mean <- c(snapy11mean, snapy12mean, snapy13mean, snapy14mean)
+snapy2mean <- c(snapy21mean, snapy22mean, snapy23mean, snapy24mean)
+snapy3mean <- c(snapy31mean, snapy32mean, snapy33mean, snapy34mean)
+
+cy <- (1 * snapy1mean) + (-2 * snapy2mean) + (1 * snapy3mean)
+cy <- t(cy)
+cy <- t(cy)
+
+H1 <- (20/6) * (cy %*% t(cy))
+H1 <- (20/6) * ((1 * snapy1mean) + (-2 * snapy2mean) + (1 * snapy3mean)) %*% 
+t(((1 * snapy1mean) + (-2 * snapy2mean) + (1 * snapy3mean)))
+snapeh <- solve(sumsnapE) %*% H1 #--E-1H
+
+WilksH1 <- (det(sumsnapE))/(det(sumsnapE + H1)) #--creates wilks lambda
+  dimx<-dim(snapbean1)
+  fval1<-(dimx[1]-dimx[2])*WilksH1/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pval1<-pf(fval1,df1,df2)
+  df<-cbind(df1,df2)
+
+eh1 <- solve(sumsnapE) %*% H1
+eigeneh <- eigen(eh1)
+RoyH1 <- eigeneh$values[1]/(1 + eigeneh$values[1])
+RoyH1pvalue <- 1 - pf((v-p+1)/(v*p)+RoyH1, df1=p, df2=v-p+1)
+
+customRoy <- sumsnap$Eigenvalues[,1]/(1 + sumfish$Eigenvalues[,1])
+
+PillaiH1 <- eigeneh$values[1]/(1 + eigeneh$values[1])
+PillaiH1pvalue <- 1 - pf((v-p+1)/(v*p)+PillaiH1, df1=p, df2=v-p+1)
+HotellingH1 <- sum(diag(eh1))
+HotellingH1pvalue <- 1 - pf((v-p+1)/(v*p)+HotellingH1, df1=p, df2=v-p+1)
+N <- (33 - 4 - 1)/2
+m <- ((2 - 4)  - 1)/2 # Vh is 2 and p = 4 - so m = 0 is used in table lookup
+Ve <- 3 * (12 - 1)
+Vh <- 3 - 1
+p <- 4
+s <- min(Vh, p)
+#--paste values
+cat(paste(" WilksH1 = " , WilksH1 ,  " pvalue = ", pval1, " SIGNIFICANT ", "\n", 
+" RoyH1 = " , RoyH1 , "\n", " PillaiH1 = " , PillaiH1 , "\n", " HotellingH1 = " , 
+HotellingH1 , sep=""))
+```
+     
+  \setlength{\itemindent}{.5in}
+        
+   (c) Test linear, quadratic, and cubic contrasts for sowing date.
+   
+   Solution:
+   
+```{r}
+snapbean <- read.table("/nethome/erichs/multivariate_analysis/T6_18_SNAPBEAN.DAT")
+snapbean1 <- as.matrix(snapbean[,4:7])
+
+N <- (33 - 4 - 1)/2
+m <- ((2 - 4)  - 1)/2 # Vh is 2 and p = 4 - so m = 0 is used in table lookup
+Ve <- 3 * (12 - 1)
+Vh <- 3 - 1
+p <- 4
+s <- min(Vh, p)
+
+snap1 <- snapbean[c(1:15),]
+snap2 <- snapbean[c(16:30),]
+snap3 <- snapbean[c(31:45),]
+snap4 <- snapbean[c(46:60),]
+snapbeanSfactor <- factor(snapbean[,1])
+snapbeanVfactor <- factor(snapbean[,2])
+sumsnap <- summary(manova(snapbean1 ~ snapbeanSfactor), test="W")
+sumsnapE <- sumsnap$SS$Residuals
+snapy11mean <- mean(snap1[,4])
+snapy12mean <- mean(snap1[,5])
+snapy13mean <- mean(snap1[,6])
+snapy14mean <- mean(snap1[,7])
+
+snapy21mean <- mean(snap2[,4])
+snapy22mean <- mean(snap2[,5])
+snapy23mean <- mean(snap2[,6])
+snapy24mean <- mean(snap2[,7])
+
+snapy31mean <- mean(snap3[,4])
+snapy32mean <- mean(snap3[,5])
+snapy33mean <- mean(snap3[,6])
+snapy34mean <- mean(snap3[,7])
+
+snapy41mean <- mean(snap4[,4])
+snapy42mean <- mean(snap4[,5])
+snapy43mean <- mean(snap4[,6])
+snapy44mean <- mean(snap4[,7])
+
+snapy1mean <- c(snapy11mean, snapy12mean, snapy13mean, snapy14mean)
+snapy2mean <- c(snapy21mean, snapy22mean, snapy23mean, snapy24mean)
+snapy3mean <- c(snapy31mean, snapy32mean, snapy33mean, snapy34mean)
+snapy4mean <- c(snapy41mean, snapy42mean, snapy43mean, snapy44mean)
+
+cy1 <- (-3 * snapy1mean) + (-1 * snapy2mean) + (1 * snapy3mean) + (3 * snapy4mean)
+cy1 <- t(cy1)
+cy1 <- t(cy1)
+cy2 <- (1 * snapy1mean) + (-1 * snapy2mean) + (-1 * snapy3mean) + (1 * snapy4mean)
+cy2 <- t(cy2)
+cy2 <- t(cy2)
+cy3 <- (-1 * snapy1mean) + (3 * snapy2mean) + (-3 * snapy3mean) + (1 * snapy4mean)
+cy3 <- t(cy3)
+cy3 <- t(cy3)
+H1 <- (15) * (cy1 %*% t(cy1))
+snapeh1 <- solve(sumsnapE) %*% H1
+WilksH1 <- det(sumsnapE)/det(sumsnapE + H1)
+WilksH1F <- ((12 + 140 -4 -1)/(12 + 140 -2) * p) * WilksH1
+WilksH1P <- 1 - pf(WilksH1F, 12, 140, lower.tail=F) #- (1-pf(36, 2, 30))
+
+  dimx<-dim(snapbean1)
+  fvalb1<-(dimx[1]-dimx[2])*WilksH1/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pvalb1<-pf(fvalb1,df1,df2)
+  #cat("T-squared=",WilksH1,fill=TRUE)
+  df<-cbind(df1,df2)
+  #cat("F-value=",fvalb1," df=",df," p-value=",pvalb1, "  NOT SIGNIFICANT")
+
+H2 <- (15) * (cy2 %*% t(cy2))
+snapeh2 <- solve(sumsnapE) %*% H2
+WilksH2 <- det(sumsnapE)/det(sumsnapE + H2)
+WilksH2F <- ((12 + 140 -4 -1)/(12 + 140 -2) * p) * WilksH2
+WilksH2P <- 1 - pf(WilksH2F, 12, 140, lower.tail=F) #- (1-pf(36, 2, 30))
+
+  dimx<-dim(snapbean1)
+  fvalb2<-(dimx[1]-dimx[2])*WilksH2/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pvalb2<-pf(fvalb2,df1,df2)
+  #cat("T-squared=",WilksH2,fill=TRUE)
+  df<-cbind(df1,df2)
+
+H3 <- (15) * (cy3 %*% t(cy3))
+snapeh3 <- solve(sumsnapE) %*% H3
+WilksH3 <- det(sumsnapE)/det(sumsnapE + H3)
+WilksH3F <- ((12 + 140 -4 -1)/(12 + 140 -2) * p) * WilksH3
+WilksH3P <- 1 - pf(WilksH3F, 12, 140, lower.tail=F) #- (1-pf(36, 2, 30))
+
+  dimx<-dim(snapbean1)
+  fvalb3<-(dimx[1]-dimx[2])*WilksH3/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pvalb3<-pf(fvalb3,df1,df2)
+  #cat("T-squared=",WilksH3,fill=TRUE)
+  df<-cbind(df1,df2)
+
+snapeh1 <- solve(sumsnapE) %*% H1
+eigeneh1 <- eigen(snapeh1)
+RoyH1 <- eigeneh1$values[1]/(1 + eigeneh1$values[1])
+RoyH1pvalue <- 1 - pf((v-p+1)/(v*p)+RoyH1, df1=p, df2=v-p+1)
+
+snapeh2 <- solve(sumsnapE) %*% H2
+eigeneh2 <- eigen(snapeh2)
+RoyH2 <- eigeneh2$values[1]/(1 + eigeneh2$values[1])
+
+snapeh3 <- solve(sumsnapE) %*% H3
+eigeneh3 <- eigen(snapeh3)
+RoyH3 <- eigeneh3$values[1]/(1 + eigeneh3$values[1])
+#customRoy1 <- sumsnap$Eigenvalues[,1]/(1 + sumsnap$Eigenvalues[,1])
+PillaiH1 <- eigeneh1$values[1]/(1 + eigeneh1$values[1])
+PillaiH2 <- eigeneh2$values[1]/(1 + eigeneh2$values[1])
+PillaiH3 <- eigeneh3$values[1]/(1 + eigeneh3$values[1])
+HotellingH1 <- diag(snapeh1)
+HotellingH1 <- sum(HotellingH1)
+HotellingH2 <- diag(snapeh2)
+HotellingH2 <- sum(HotellingH2)
+HotellingH3 <- diag(snapeh3)
+HotellingH3 <- sum(HotellingH3)
+
+#--paste values
+cat(paste(" LINEAR: WilksH1 = " , WilksH1 ,  " pvalue = ", pvalb1, 
+" SIGNIFICANT ", "\n", " RoyH1 = " , RoyH1 , "\n", " PillaiH1 = " , 
+PillaiH1 , "\n", " HotellingH1 = " , HotellingH1 , "\n", "\n", 
+" QUADRATIC: WilksH2 = " , WilksH2 ,  " pvalue = ", pvalb2, " SIGNIFICANT ", 
+"\n", " RoyH2 = " , RoyH2 , "\n", " PillaiH2 = " , PillaiH2 , "\n", 
+" HotellingH2 = " , HotellingH2 , "\n", "\n", " CUBIC: WilksH3 = " , WilksH3 ,  
+" pvalue = ", pvalb3, " SIGNIFICANT ", "\n", " RoyH3 = " , RoyH3 , "\n", 
+" PillaiH3 = " , PillaiH3 , "\n", " HotellingH3 = " , HotellingH3 , "\n", 
+"\n", sep=""))
+```
+    
+ 
+  \setlength{\itemindent}{.5in}
+        
+   (d) If any of the tests in part (a) rejects Ho, carry out ANOVA F-tests on the four variables.
+   
+   Solution:
+   
+
+```{r}
+newsnap <- data.frame(snapbean1)
+aovsnapSV <- aov(snapbean1 ~ snapbeanSfactor*snapbeanVfactor, data=newsnap)
+summary(aovsnapSV)
+```
+
+NOTE: as listed above, all outcomes are significant, EXCEPT the last F value for Response on V7, snapbeanSfactor:snapbeanVfactor, - which has an F of 2.08 and a pvalue of .0724.
+ 
+  \setlength{\itemindent}{.5in}
+        
+   (e) Test the significance of y3 and y4 adjusted for y1 and y2 in the main effects and interaction.
+   
+   Solution: 
+   
+   
+```{r}
+y12W <- summary(manova(snapbean1[,1:2] ~ snapbeanSfactor*snapbeanVfactor), test="W")
+Wilks12S<- y12W$stats[5]
+Wilks12V<- y12W$stats[6]
+Wilks12SV<- y12W$stats[7]
+y1234W <- summary(manova(snapbean1 ~ snapbeanSfactor*snapbeanVfactor),test="W")
+Wilks1234S<- y1234W$stats[5]
+Wilks1234V<- y1234W$stats[6]
+Wilks1234SV<- y1234W$stats[7]
+
+sigtestS <- y1234W$stats[5]/y12W$stats[5]
+sigtestSF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtestS
+sigtestSP <- pf(sigtestSF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+
+sigtestV <- y1234W$stats[6]/y12W$stats[6]
+sigtestVF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtestV
+sigtestVP <- pf(sigtestVF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+
+sigtestSV <- y1234W$stats[7]/y12W$stats[7]
+sigtestSVF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtestSV
+sigtestSVP <- pf(sigtestSVF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+
+cat(paste(" S - y3, y4 | y1, y2  = " , sigtestS , " pvalue = ", sigtestSP, 
+" NOT SIGNIFICANT ", "\n", " V - y3, y4 | y1, y2  = " , sigtestV , 
+" pvalue = ", sigtestVP, " SIGNIFICANT ", "\n", " SV - y3, y4 | y1, y2  = " , 
+sigtestSV , " pvalue = ", sigtestSVP, " NOT SIGNIFICANT ", "\n", sep=""))
+```
+  
+  
+ \setlength{\itemindent}{.5in}
+        
+   (e) Test significance of each variable adjusted for the other three.
+   
+   Solution:  
+   
+```{r}
+y234W <- summary(manova(snapbean1[,c(2,3,4)] ~ snapbeanSfactor*snapbeanVfactor), test="W")
+Wilks234S<- y234W$stats[5]
+Wilks234V<- y234W$stats[6]
+Wilks234SV<- y234W$stats[7]
+y134W <- summary(manova(snapbean1[,c(1,3,4)] ~ snapbeanSfactor*snapbeanVfactor),test="W")
+Wilks134S<- y134W$stats[5]
+Wilks134V<- y134W$stats[6]
+Wilks134SV<- y134W$stats[7]
+y124W <- summary(manova(snapbean1[,c(1,2,4)] ~ snapbeanSfactor*snapbeanVfactor),test="W")
+Wilks124S<- y124W$stats[5]
+Wilks124V<- y124W$stats[6]
+Wilks124SV<- y124W$stats[7]
+y123W <- summary(manova(snapbean1[,c(1,2,3)] ~ snapbeanSfactor*snapbeanVfactor),test="W")
+Wilks123S<- y123W$stats[5]
+Wilks123V<- y123W$stats[6]
+Wilks123SV<- y123W$stats[7]
+
+sigtesty1S <- y1234W$stats[5]/y234W$stats[5]
+sigtesty1SF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty1S
+sigtesty1SP <- pf(sigtesty1SF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty1S <- round(sigtesty1S, digits=4)
+sigtesty1SP <- round(sigtesty1SP, digits=4)
+
+sigtesty1V <- y1234W$stats[6]/y234W$stats[6]
+sigtesty1VF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty1V
+sigtesty1VP <- pf(sigtesty1VF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty1V <- round(sigtesty1V, digits=4)
+sigtesty1VP <- round(sigtesty1VP, digits=4)
+
+sigtesty1SV <- y1234W$stats[7]/y234W$stats[7]
+sigtesty1SVF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty1SV
+sigtesty1SVP <- pf(sigtesty1SVF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty1SV <- round(sigtesty1SV, digits=4)
+sigtesty1SVP <- round(sigtesty1SVP, digits=4)
+
+
+sigtesty2S <- y1234W$stats[5]/y134W$stats[5]
+sigtesty2SF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty2S
+sigtesty2SP <- pf(sigtesty2SF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty2S <- round(sigtesty2S, digits=4)
+sigtesty2SP <- round(sigtesty2SP, digits=4)
+
+sigtesty2V <- y1234W$stats[6]/y134W$stats[6]
+sigtesty2VF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty2V
+sigtesty2VP <- pf(sigtesty2VF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty2V <- round(sigtesty2V, digits=4)
+sigtesty2VP <- round(sigtesty2VP, digits=4)
+
+sigtesty2SV <- y1234W$stats[7]/y134W$stats[7]
+sigtesty2SVF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty2SV
+sigtesty2SVP <- pf(sigtesty2SVF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty2SV <- round(sigtesty2SV, digits=4)
+sigtesty2SVP <- round(sigtesty2SVP, digits=4)
+
+sigtesty3S <- y1234W$stats[5]/y124W$stats[5]
+sigtesty3SF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty3S
+sigtesty3SP <- pf(sigtesty3SF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty3S <- round(sigtesty3S, digits=4)
+sigtesty3SP <- round(sigtesty3SP, digits=4)
+
+sigtesty3V <- y1234W$stats[6]/y124W$stats[6]
+sigtesty3VF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty3V
+sigtesty3VP <- pf(sigtesty3VF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty3V <- round(sigtesty3V, digits=4)
+sigtesty3VP <- round(sigtesty3VP, digits=4)
+
+sigtesty3SV <- y1234W$stats[7]/y124W$stats[7]
+sigtesty3SVF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty3SV
+sigtesty3SVP <- pf(sigtesty3SVF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty3SV <- round(sigtesty3SV, digits=4)
+sigtesty3SVP <- round(sigtesty3SVP, digits=4)
+
+sigtesty4S <- y1234W$stats[5]/y123W$stats[5]
+sigtesty4SF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty4S
+sigtesty4SP <- pf(sigtesty4SF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty4S <- round(sigtesty4S, digits=4)
+sigtesty4SP <- round(sigtesty4SP, digits=4)
+
+sigtesty4V <- y1234W$stats[6]/y123W$stats[6]
+sigtesty4VF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty4V
+sigtesty4VP <- pf(sigtesty4VF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty4V <- round(sigtesty4V, digits=4)
+sigtesty4VP <- round(sigtesty4VP, digits=4)
+
+sigtesty4SV <- y1234W$stats[7]/y123W$stats[7]
+sigtesty4SVF <- ((2 + 62 -4 -1)/(2 + 62 -2) * p) * sigtesty4SV
+sigtesty4SVP <- pf(sigtesty4SVF, 2, 62, lower.tail=F) #- (1-pf(36, 2, 30))
+sigtesty4SV <- round(sigtesty4SV, digits=4)
+sigtesty4SVP <- round(sigtesty4SVP, digits=4)
+
+
+cat(paste(" y1 | y2, y3, y4 (S, V, SV) = " , sigtesty1S  , sigtesty1V  , sigtesty1SV  , 
+" pvalue = ", sigtesty1SP, "\n", " y2 | y1, y3, y4 (S, V, SV) = " , 
+sigtesty2S  ,  sigtesty2V  , sigtesty2SV  , " pvalue = ", sigtesty2SP, "\n", 
+" y3 | y1, y2, y4 (S, V, SV) = " , sigtesty3S  ,  sigtesty3V  ,  sigtesty3SV , 
+" pvalue = ", sigtesty3SP, "\n", " y4 | y1, y2, y3 (S, V, SV) = " , 
+sigtesty4S ,  sigtesty4V ,  sigtesty4SV , " pvalue = ", sigtesty4SP, "\n", sep=""))
+```
+  
+\begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+                
+  \item [Problem 6.31]
+    \end{enumerate}
+        
+   Carry out a 3 way manova using Table 6.20, testing for main effects and interactions
+   
+  Solution:
+     
+```{r}
+fabrics <- read.table("/nethome/erichs/multivariate_analysis/T6_20_WEAR.DAT")
+colnames(fabrics) <- c("P", "T", "F", "y1", "y2", "y3")
+#snapbean$S <- as.factor(snapbean$S)
+fabrics1 <- as.matrix(cbind(fabrics[,4:6]))
+P <- factor(fabrics[,1])
+T <- factor(fabrics[,2])
+F <- factor(fabrics[,3])
+effectW <- summary(manova(fabrics1 ~ P*T*F), test="W")
+effectH <- summary(manova(fabrics1 ~ P*T*F), test="H")
+effectR <- summary(manova(fabrics1 ~ P*T*F), test="R")
+effectP <- summary(manova(fabrics1 ~ P*T*F), test="P")
+effectR_corrected <- effectW$Eigenvalues[,1]/(1 + effectW$Eigenvalues[,1])
+effectW
+effectH
+effectR
+effectR_corrected
+effectP
+```
+  
+\begin{enumerate}\bfseries
+  
+        
+  \setlength{\itemindent}{.5in}
+                
+  \item [Problem 6.33]
+    \end{enumerate}
+        
+   Carry out a profile analysis on the fish data in Table 6.17, testing for parallelism, equal levels, and flatness.
+     
+  Solution:
+  
+```{r}
+fish <- read.table("/nethome/erichs/multivariate_analysis/T6_17_FISH.DAT")
+fishoriginal <- fish
+fish <- as.matrix(fish[,2:5])
+#--factorize column 1
+p <- 4
+n <- 36
+v <- 35
+colnames(fish) <- c("y1", "y2", "y3", "y4")
+C <- matrix(c(1,0,0,-1,1,0,0,-1,1,0,0,-1), ncol=4)
+#--parallel?
+z1 <- as.matrix(fish)%*% t(C)
+result1 <- summary(manova(as.matrix(z1) ~ as.factor(fishoriginal$V1)), test="W")
+
+#---same levels?
+j <- c(1,1,1,1)
+z2 <- as.matrix(fish) %*% j
+result2 <- summary(aov(z2 ~ as.factor(fishoriginal$V1)), test="W")
+
+#--are they flat?
+z3y1mean <- as.matrix(mean(z1[,1]))
+z3y2mean <- as.matrix(mean(z1[,2]))
+z3y3mean <- as.matrix(mean(z1[,3]))
+Ve <- as.matrix(Ve)
+newVe <- 1/33
+
+attach(fishoriginal)
+
+fishymean <- rbind(fishy1mean, fishy2mean, fishy3mean)
+fishymean <- as.matrix(c(mean(fishymean[,1]), mean(fishymean[,2]), 
+mean(fishymean[,3]), mean(fishymean[,4])))
+fishymean <- t(fishymean)
+
+z1hat <- apply(z1, 2, mean)
+z1hat <- matrix(z1hat)
+z1hat <- t(z1hat)
+source('/svn/REACCH/trunk/reacch-r-development/r-scripts/STAT519/hotel1.R')
+zerov <- c(0,0,0)
+
+Ct <- t(C)
+y <- matrix(c(z3y1mean, z3y2mean, z3y3mean), ncol=1)
+yt <- t(y)
+zerov <- t(c(0,0,0))
+zerov <- t(zerov)
+#hotelt <- f.hotel1(z1, zerov)
+
+SSWresult1 <- result1$SS$Residuals
+t1flatz <-  t(Ct %*% y)
+t2flatz <- (Ct %*% SSWresult1 %*% C)
+t3flatz <- Ct %*% y
+T2flatz <- n * (t1flatz %*% t2flatz %*% t3flatz) #---perform T2 calc 
+#using y mean vector, S, and contrast matrix
+pvalueflat <- pf(T2flatz, df1=p, df2=v - p + 1, lower.tail=F)
+pvalueflat <- 7.880023775163e-19
+
+dimx<-dim(snapbean1)
+  fvalflatz<-(dimx[1]-dimx[2])*T2flatz/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pvalflatz<-pf(fvalflatz,df1,df2)
+  #cat("T-squared=",T2flatz,fill=TRUE)
+  df<-cbind(df1,df2)
+  
+cat(paste("PARAMETRIC - Parallelism?"))
+result1
+
+cat(paste("PARAMETRIC - Equal Levels?"))
+result2
+
+cat(paste(" PARAMETRIC - Flatness?"))
+cat(paste("   Wilks = ", T2flatz, "   pvalue = ", pvalflatz, "  NOT SIGNIFICANT", sep=""))
+```     
+  
+  
+  
+  (b) Carry out a non-parametric analysis on the fish data in Table 6.17, testing for parallelism, equal levels, and flatness.
+  
+     
+  Solution:
+  
+```{r}
+fish <- read.table("/nethome/erichs/multivariate_analysis/T6_17_FISH.DAT")
+fishoriginal <- fish
+fish <- as.matrix(fish[,2:5])
+#--factorize column 1
+p <- 4
+n <- 36
+v <- 35
+colnames(fish) <- c("y1", "y2", "y3", "y4")
+B <- c(1000)
+  xls <- matrix(data=NaN, c(1000))
+  for (i in 1:1000) {
+  xls[i] <- mean(z1*sample(c(-1,1), 36, replace = TRUE))
+  }
+n1=12
+n2=12
+n3=12
+orig.gp=c(rep(1,n1),rep(2,n2),rep(3,n3))
+perm.ds1=sample(orig.gp)
+perm.ds1 <- factor(perm.ds1)
+resultperm1 <- summary(manova(as.matrix(z1) ~ as.factor(perm.ds1)), test="W")
+pvalueflat2 <- pf(resultperm1$stats[3], df1=p, df2=v - p + 1, lower.tail=F)
+
+resultperm2 <- summary(aov(as.matrix(z2) ~ as.factor(perm.ds1)), test="W")
+#pvalueflat3 <- pf(resultperm2$stats[3], df1=p, df2=v - p + 1, lower.tail=F)
+
+#--nonparametric flatness?
+fish <- read.table("/nethome/erichs/multivariate_analysis/T6_17_FISH.DAT")
+permds1factor <- data.frame(perm.ds1)
+fish <- cbind(fish,permds1factor)
+fish <- (fish[,-1])
+colnames(fish) <- c("V2", "V3", "V4", "V5", "V6")
+
+fish1 <- subset(fish, V6==1)
+fish2 <- subset(fish, V6==2)
+fish3 <- subset(fish, V6==3)
+fishfactor <- factor(fish[,5])
+fish <- cbind(fish[1:4])
+fish <- as.matrix(fish)
+
+fishy11mean <- mean(fish1[,1])
+fishy12mean <- mean(fish1[,2])
+fishy13mean <- mean(fish1[,3])
+fishy14mean <- mean(fish1[,4])
+fishy21mean <- mean(fish2[,1])
+fishy22mean <- mean(fish2[,2])
+fishy23mean <- mean(fish2[,3])
+fishy24mean <- mean(fish2[,4])
+fishy31mean <- mean(fish3[,1])
+fishy32mean <- mean(fish3[,2])
+fishy33mean <- mean(fish3[,3])
+fishy34mean <- mean(fish3[,4])
+fishy1mean <- c(fishy11mean, fishy12mean, fishy13mean, fishy14mean)
+fishy2mean <- c(fishy21mean, fishy22mean, fishy23mean, fishy24mean)
+fishy3mean <- c(fishy31mean, fishy32mean, fishy33mean, fishy34mean)
+
+
+z3y1mean <- as.matrix(mean(z1[,1]))
+z3y2mean <- as.matrix(mean(z1[,2]))
+z3y3mean <- as.matrix(mean(z1[,3]))
+
+#snapvallt = snapvall[4:7]
+z1hat <- apply(z1, 2, mean)
+z1hat <- matrix(z1hat)
+z1hat <- t(z1hat)
+source('/svn/REACCH/trunk/reacch-r-development/r-scripts/STAT519/hotel1.R')
+zerov <- c(0,0,0)
+grandfishymean1 <- mean(fishy1mean)
+grandfishymean2 <- mean(fishy2mean)
+grandfishymean3 <- mean(fishy3mean)
+Ct <- t(C)
+y <- matrix(c(grandfishymean1, grandfishymean2, grandfishymean3), ncol=1)
+yt <- t(y)
+zerov <- t(c(0,0,0))
+zerov <- t(zerov)
+
+SSWresult1 <- result1$SS$Residuals
+t1flatz <-  t(Ct %*% y)
+t2flatz <- (Ct %*% SSWresult1 %*% C)
+t3flatz <- Ct %*% y
+T2flatz <- n * (t1flatz %*% t2flatz %*% t3flatz) #---perform T2 calc 
+#using y mean vector, S, and contrast matrix
+#print(paste("T2 = " , T2flatz))
+pvalueflat <- pf(T2flatz, df1=p, df2=v - p + 1, lower.tail=F)
+pvalueflat <- 7.880023775163e-19
+
+dimx<-dim(snapbean1)
+  fvalflatz<-(dimx[1]-dimx[2])*T2flatz/(dimx[2]*(dimx[1]-1))
+  df1<-dimx[2]
+  df2<-dimx[1]-dimx[2]
+  pvalflatz<-pf(fvalflatz,df1,df2)
+  #cat("T-squared=",T2flatz,fill=TRUE)
+  df<-cbind(df1,df2)
+
+cat("NON-PARAMETRIC - Parallelism:") 
+resultperm1
+cat("NON-PARAMETRIC - Same Levels:")
+resultperm2
+cat("NON-PARAMETRIC - Flatness")
+hotelt <- f.hotel1(z1,c(0,0,0))
+```     
+  
+
+
+
+
+    
